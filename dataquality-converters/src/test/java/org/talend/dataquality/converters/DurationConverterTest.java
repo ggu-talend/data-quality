@@ -25,15 +25,15 @@ import org.junit.Test;
  */
 public class DurationConverterTest {
 
-    private double delta = 1;
+    private double delta = 1.0E-1;
 
     // 1 year = 365 days = 12 months (!= 12 * 30)
     // 1 month = 30 days
     private static double year = 1;
 
-    private static double month = 12;
+    private static double month = 12.2;
 
-    private static double week = 52;
+    private static double week = 52.1;
 
     private static double day = 365;
 
@@ -51,7 +51,7 @@ public class DurationConverterTest {
         assertNotEquals(13 * 30, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.DAYS).convert(13), delta);
 
         assertEquals(5 * 7, new DurationConverter(ChronoUnit.WEEKS, ChronoUnit.DAYS).convert(5), delta);
-        assertEquals(5, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.WEEKS).convert(1), delta);
+        assertEquals(4.3, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.WEEKS).convert(1), delta);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class DurationConverterTest {
     public void testConvertMONTHS() {
         assertEquals(year, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.YEARS).convert(month), delta);
         assertEquals(month, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.MONTHS).convert(month), delta);
-        assertEquals(week, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.WEEKS).convert(month), delta);
+        assertEquals(52.3, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.WEEKS).convert(month), delta);
         assertEquals(day, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.DAYS).convert(month), delta);
         assertEquals(hour, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.HOURS).convert(month), delta);
         assertEquals(minute, new DurationConverter(ChronoUnit.MONTHS, ChronoUnit.MINUTES).convert(month), delta);
@@ -139,6 +139,8 @@ public class DurationConverterTest {
         assertEquals(minute, new DurationConverter(ChronoUnit.DAYS, ChronoUnit.MINUTES).convert(day), delta);
         assertEquals(second, new DurationConverter(ChronoUnit.DAYS, ChronoUnit.SECONDS).convert(day), delta);
         assertEquals(millisecond, new DurationConverter(ChronoUnit.DAYS, ChronoUnit.MILLIS).convert(day), delta);
+
+        assertEquals(3.9, new DurationConverter(ChronoUnit.DAYS, ChronoUnit.YEARS).convert(1440), delta);
     }
 
     @Test

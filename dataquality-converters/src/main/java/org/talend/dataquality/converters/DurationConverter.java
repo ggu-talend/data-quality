@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.dataquality.converters;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -160,14 +158,11 @@ public class DurationConverter {
         case DAYS:
             return getExactDays(value, days);
         case YEARS:
-            return new BigDecimal(String.valueOf(days)).divide(new BigDecimal(String.valueOf(num_365)), RoundingMode.HALF_UP)
-                    .longValue();
+            return days / num_365;
         case MONTHS:
-            return new BigDecimal(String.valueOf(days)).divide(new BigDecimal(String.valueOf(num_30)), RoundingMode.HALF_UP)
-                    .longValue();
+            return days / num_30;
         case WEEKS:
-            return new BigDecimal(String.valueOf(days)).divide(new BigDecimal(String.valueOf(num_7)), RoundingMode.UP)
-                    .longValue();
+            return days / num_7;
         default:
             break;
         }

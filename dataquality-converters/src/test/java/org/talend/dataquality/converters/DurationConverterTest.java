@@ -25,25 +25,25 @@ import org.junit.Test;
  */
 public class DurationConverterTest {
 
-    private double delta = 1.0E-1;
+    private double delta = 1.0E-1d;
 
     // 1 year = 365 days = 12 months (!= 12 * 30)
     // 1 month = 30 days
-    private static double year = 1;
+    private static double year = 1d;
 
-    private static double month = 12.2;
+    private static double month = 12.2d;
 
-    private static double week = 52.1;
+    private static double week = 52.1d;
 
-    private static double day = 365;
+    private static double day = 365d;
 
-    private static double hour = 8760;// 365 * 24;
+    private static double hour = 8760d;// 365 * 24;
 
-    private static double minute = 525600;// 365 * 24 * 60;
+    private static double minute = 525600d;// 365 * 24 * 60;
 
-    private static double second = 31536000;// 365 * 24 * 60 * 60;
+    private static double second = 31536000d;// 365 * 24 * 60 * 60;
 
-    private static double millisecond = 31536000000L;// (365 * 24 * 60 * 60 * 1000);
+    private static double millisecond = 31536000000d;// (365 * 24 * 60 * 60 * 1000);
 
     @Test
     public void testConvertMonths2Days() {

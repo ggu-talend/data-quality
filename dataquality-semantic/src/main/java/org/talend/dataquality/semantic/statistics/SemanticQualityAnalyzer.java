@@ -146,17 +146,17 @@ public class SemanticQualityAnalyzer extends QualityAnalyzer<ValueQualityStatist
     }
 
     private boolean isValid(DQCategory category, CategoryType catType, String value) {
-        LFUCache<String, Boolean> categoryCache = knownValidationCategoryCache.get(category.getId());
+        // LFUCache<String, Boolean> categoryCache = knownValidationCategoryCache.get(category.getId());
 
-        if (categoryCache == null) {
-            categoryCache = new LFUCache<String, Boolean>(10, 1000, 0.01f);
-            knownValidationCategoryCache.put(category.getId(), categoryCache);
-        } else {
-            final Boolean isValid = categoryCache.get(value);
-            if (isValid != null) {
-                return isValid;
-            }
-        }
+        // if (categoryCache == null) {
+        // categoryCache = new LFUCache<String, Boolean>(10, 1000, 0.01f);
+        // knownValidationCategoryCache.put(category.getId(), categoryCache);
+        // } else {
+        // final Boolean isValid = categoryCache.get(value);
+        // if (isValid != null) {
+        // return isValid;
+        // }
+        // }
         boolean validCat = false;
         switch (catType) {
         case REGEX:
@@ -175,7 +175,7 @@ public class SemanticQualityAnalyzer extends QualityAnalyzer<ValueQualityStatist
         default:
             break;
         }
-        categoryCache.put(value, validCat);
+        // categoryCache.put(value, validCat);
         return validCat;
     }
 

@@ -15,12 +15,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.talend.dataquality.common.inference.Analyzer;
 import org.talend.dataquality.common.inference.Analyzers;
-import org.talend.dataquality.common.inference.ValueQualityStatistics;
 import org.talend.dataquality.common.inference.Analyzers.Result;
+import org.talend.dataquality.common.inference.ValueQualityStatistics;
 import org.talend.dataquality.semantic.index.utils.DictionaryGenerationSpec;
 import org.talend.dataquality.semantic.index.utils.SemanticDictionaryGenerator;
 import org.talend.dataquality.semantic.recognizer.CategoryRecognizerBuilder;
@@ -31,34 +30,17 @@ public class SemanticQualityAnalyzerPerformanceTest {
 
     private static int RECORD_LINES_NUMBER = 500000;
 
-    private static final String BIG_FILE_PATH = "src/test/resources/org/talend/dataquality/semantic/statistics/validation_big_file.csv";
+    private static final String BIG_FILE_PATH = "src/test/resources/org/talend/dataquality/semantic/statistics/uniqueColumn_validation_big_file.csv";
 
-    private static final List<String[]> RECORDS_CRM_CUST = getRecords("validation_big_file.csv");
+    private static final List<String[]> RECORDS_CRM_CUST = getRecords("uniqueColumn_validation_big_file.csv");
 
     private static final DictionaryGenerationSpec[] EXPECTED_CATEGORIES_DICT = new DictionaryGenerationSpec[] { //
             DictionaryGenerationSpec.AIRPORT_CODE, //
-            DictionaryGenerationSpec.CIVILITY, //
-            DictionaryGenerationSpec.CONTINENT, //
-            DictionaryGenerationSpec.COUNTRY, //
-            DictionaryGenerationSpec.COUNTRY_CODE_ISO3, //
-            DictionaryGenerationSpec.MONTH, //
-            DictionaryGenerationSpec.US_COUNTY, //
-            DictionaryGenerationSpec.FR_COMMUNE, //
-            DictionaryGenerationSpec.FR_DEPARTEMENT, //
-            DictionaryGenerationSpec.LANGUAGE //
     };
 
     private static final long[][] EXPECTED_VALIDITY_COUNT_DICT = new long[][] { //
             new long[] { 9944, 0, 0 }, //
-            new long[] { 9944, 0, 0 }, //
-            new long[] { 9944, 0, 0 }, //
-            new long[] { 9944, 0, 0 }, //
-            new long[] { 9944, 0, 0 }, //
-            new long[] { 9944, 0, 0 }, //
-            new long[] { 9943, 1, 0 }, //
-            new long[] { 9943, 0, 0 }, //
-            new long[] { 9943, 0, 0 }, //
-            new long[] { 9943, 0, 0 }, //
+
     };
 
     @BeforeClass
@@ -74,7 +56,6 @@ public class SemanticQualityAnalyzerPerformanceTest {
     }
 
     @Test
-    @Ignore
     public void testSemanticQualityAnalyzerWithDictionaryCategory() {
         String[] a = new String[EXPECTED_CATEGORIES_DICT.length];
         for (int i = 0; i < EXPECTED_CATEGORIES_DICT.length; i++) {
@@ -89,9 +70,16 @@ public class SemanticQualityAnalyzerPerformanceTest {
         );
 
         long time = System.currentTimeMillis();
-        for (String[] record : records) {
-            analyzers.analyze(record);
-        }
+        // int j = 0;
+        for (int i = 0; i < 10; i++)
+            for (String[] record : records) {
+                analyzers.analyze(record);
+                // j++;
+                // if (j % 1000 == 0) {
+                // System.out.println("j = " + j);
+                // System.out.println("took: = " + (System.currentTimeMillis() - time) + " ms");
+                // }
+            }
         final List<Result> result = analyzers.getResult();
         System.out.println("Result = " + (System.currentTimeMillis() - time) + " ms");
 
@@ -103,15 +91,15 @@ public class SemanticQualityAnalyzerPerformanceTest {
         }
 
         // Semantic validation assertions
-        for (int i = 0; i < expectedCategories.length; i++) {
-            final ValueQualityStatistics stats = result.get(i).get(ValueQualityStatistics.class);
-            // System.out.println("new long[] {" + stats.getValidCount() + ", " + stats.getInvalidCount() + ", "
-            // + stats.getEmptyCount() + "}, //");
-            assertEquals("Unexpected valid count on column " + i, expectedValidityCount[i][0], stats.getValidCount());
-            assertEquals("Unexpected invalid count on column " + i, expectedValidityCount[i][1], stats.getInvalidCount());
-            assertEquals("Unexpected empty count on column " + i, expectedValidityCount[i][2], stats.getEmptyCount());
-            assertEquals("Unexpected unknown count on column " + i, 0, stats.getUnknownCount());
-        }
+        // for (int i = 0; i < expectedCategories.length; i++) {
+        // final ValueQualityStatistics stats = result.get(i).get(ValueQualityStatistics.class);
+        // // System.out.println("new long[] {" + stats.getValidCount() + ", " + stats.getInvalidCount() + ", "
+        // // + stats.getEmptyCount() + "}, //");
+        // assertEquals("Unexpected valid count on column " + i, expectedValidityCount[i][0], stats.getValidCount());
+        // assertEquals("Unexpected invalid count on column " + i, expectedValidityCount[i][1], stats.getInvalidCount());
+        // assertEquals("Unexpected empty count on column " + i, expectedValidityCount[i][2], stats.getEmptyCount());
+        // assertEquals("Unexpected unknown count on column " + i, 0, stats.getUnknownCount());
+        // }
     }
 
     private static List<String[]> getRecords(String path) {

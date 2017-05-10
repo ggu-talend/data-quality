@@ -132,25 +132,24 @@ public class DictionarySearcher extends AbstractDictionarySearcher {
             break;
         }
         final IndexSearcher searcher = mgr.acquire();
-        CachingWrapperFilter cachingWrapperFilter = categoryToCache.get(semanticType.getId());
+        // CachingWrapperFilter cachingWrapperFilter = categoryToCache.get(semanticType.getId());
         boolean hasChildren = !CollectionUtils.isEmpty(children);
 
         // define the subset in which we will search
-        if (cachingWrapperFilter == null) {
-            if (hasChildren) {
-                Set<String> childrenId = new HashSet<>();
-                for (DQCategory category : children)
-                    childrenId.add(category.getId());
-                cachingWrapperFilter = new CachingWrapperFilter(
-                        new FieldCacheTermsFilter(F_CATID, childrenId.toArray(new String[childrenId.size()])));
-            } else
-                cachingWrapperFilter = new CachingWrapperFilter(new FieldCacheTermsFilter(F_CATID, semanticType.getId()));
-            categoryToCache.put(semanticType.getId(), cachingWrapperFilter);
-        }
+        // if (cachingWrapperFilter == null) {
+        // if (hasChildren) {
+        // Set<String> childrenId = new HashSet<>();
+        // for (DQCategory category : children)
+        // childrenId.add(category.getId());
+        // cachingWrapperFilter = new CachingWrapperFilter(
+        // new FieldCacheTermsFilter(F_CATID, childrenId.toArray(new String[childrenId.size()])));
+        // } else
+        // cachingWrapperFilter = new CachingWrapperFilter(new FieldCacheTermsFilter(F_CATID, semanticType.getId()));
+        // categoryToCache.put(semanticType.getId(), cachingWrapperFilter);
+        // }
 
         // the lucene search
-        TopDocs docs = searcher.search(query, cachingWrapperFilter, topDocLimit);
-
+        TopDocs docs = searcher.search(query, /* cachingWrapperFilter, */topDocLimit);
         ValidationMode validationMode = ValidationMode.EXACT;
         if (!hasChildren && semanticType.getValidationMode() != null) {
             validationMode = semanticType.getValidationMode();

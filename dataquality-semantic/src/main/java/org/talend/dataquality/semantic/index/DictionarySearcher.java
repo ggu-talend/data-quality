@@ -153,7 +153,7 @@ public class DictionarySearcher extends AbstractDictionarySearcher {
 
         ValidationMode validationMode = ValidationMode.EXACT;
         if (!hasChildren && semanticType.getValidationMode() != null) {
-            validationMode = semanticType.getValidationMode();
+            validationMode = ValidationMode.EXACT;
             if (ValidationMode.SIMPLIFIED.equals(validationMode)) {
                 mgr.release(searcher);
                 return docs.totalHits != 0;

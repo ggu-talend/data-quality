@@ -33,19 +33,19 @@ public class SemanticQualityAnalyzerPerformanceTest {
 
     private static final String BIG_FILE_PATH = "src/test/resources/org/talend/dataquality/semantic/statistics/validation_big_file.csv";
 
-    private static final List<String[]> RECORDS_CRM_CUST = getRecords("validation_big_file.csv");
+    private static final List<String[]> RECORDS_CRM_CUST = getRecords("uniqueColAirportAndFRCities.csv");
 
-    private static final DictionaryGenerationSpec[] EXPECTED_CATEGORIES_DICT = new DictionaryGenerationSpec[] { //
-            DictionaryGenerationSpec.AIRPORT_CODE, //
-            DictionaryGenerationSpec.CIVILITY, //
-            DictionaryGenerationSpec.CONTINENT, //
-            DictionaryGenerationSpec.COUNTRY, //
-            DictionaryGenerationSpec.COUNTRY_CODE_ISO3, //
-            DictionaryGenerationSpec.MONTH, //
-            DictionaryGenerationSpec.US_COUNTY, //
-            DictionaryGenerationSpec.FR_COMMUNE, //
-            DictionaryGenerationSpec.FR_DEPARTEMENT, //
-            DictionaryGenerationSpec.LANGUAGE //
+    private static final String[] EXPECTED_CATEGORIES_DICT = new String[] { //
+            "FR_COMMUNE", //
+            DictionaryGenerationSpec.CIVILITY.getCategoryName(), //
+            DictionaryGenerationSpec.CONTINENT.getCategoryName(), //
+            DictionaryGenerationSpec.COUNTRY.getCategoryName(), //
+            DictionaryGenerationSpec.COUNTRY_CODE_ISO3.getCategoryName(), //
+            DictionaryGenerationSpec.MONTH.getCategoryName(), //
+            DictionaryGenerationSpec.US_COUNTY.getCategoryName(), //
+            DictionaryGenerationSpec.FR_COMMUNE.getCategoryName(), //
+            DictionaryGenerationSpec.FR_DEPARTEMENT.getCategoryName(), //
+            DictionaryGenerationSpec.LANGUAGE.getCategoryName() //
     };
 
     private static final long[][] EXPECTED_VALIDITY_COUNT_DICT = new long[][] { //
@@ -76,11 +76,7 @@ public class SemanticQualityAnalyzerPerformanceTest {
     @Test
     @Ignore
     public void testSemanticQualityAnalyzerWithDictionaryCategory() {
-        String[] a = new String[EXPECTED_CATEGORIES_DICT.length];
-        for (int i = 0; i < EXPECTED_CATEGORIES_DICT.length; i++) {
-            a[i] = EXPECTED_CATEGORIES_DICT[i].getCategoryName();
-        }
-        testAnalysis(RECORDS_CRM_CUST, a, EXPECTED_VALIDITY_COUNT_DICT);
+        testAnalysis(RECORDS_CRM_CUST, EXPECTED_CATEGORIES_DICT, EXPECTED_VALIDITY_COUNT_DICT);
     }
 
     public void testAnalysis(List<String[]> records, String[] expectedCategories, long[][] expectedValidityCount) {
@@ -89,6 +85,7 @@ public class SemanticQualityAnalyzerPerformanceTest {
         );
 
         long time = System.currentTimeMillis();
+        for(int i=0;i<10;i++)
         for (String[] record : records) {
             analyzers.analyze(record);
         }
@@ -134,34 +131,6 @@ public class SemanticQualityAnalyzerPerformanceTest {
         return records;
     }
 
-    // To generate a bigger validation_big_file.csv if necessary
-    public static void main(String[] args) {
-
-        try {
-            final String resourcePath = SemanticDictionaryGenerator.class.getResource(".").getFile();
-            final String projectRoot = new File(resourcePath).getParentFile().getParentFile().getParentFile().getParentFile()
-                    .getParentFile().getParentFile().getParentFile().getParentFile().getPath() + File.separator;
-            File f = new File(projectRoot + BIG_FILE_PATH);
-            CSVPrinter writer = new CSVPrinter(new FileWriter(f), CSVFormat.DEFAULT.withDelimiter(';'));
-            List<String[]> records = new ArrayList<>();
-            Random randomGenerator = new Random();
-            for (int i = 0; i < RECORD_LINES_NUMBER; i++) {
-                records.add(new String[EXPECTED_CATEGORIES_DICT.length]);
-            }
-
-            for (int j = 0; j < EXPECTED_CATEGORIES_DICT.length; j++) {
-                List<String> file = getFile(EXPECTED_CATEGORIES_DICT[j]);
-                for (int i = 0; i < RECORD_LINES_NUMBER; i++) {
-                    records.get(i)[j] = file.get(randomGenerator.nextInt(file.size()));
-                }
-            }
-            for (String[] record : records)
-                writer.printRecord(record);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static List<String> getFile(DictionaryGenerationSpec spec) throws IOException {
 

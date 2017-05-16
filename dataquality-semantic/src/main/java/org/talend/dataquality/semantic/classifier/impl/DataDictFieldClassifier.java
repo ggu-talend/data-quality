@@ -56,16 +56,7 @@ public class DataDictFieldClassifier implements ISubCategoryClassifier {
 
     @Override
     public boolean validCategories(String data, DQCategory semanticType, Set<DQCategory> children) {
-        StringTokenizer t = new StringTokenizer(data, " ");
-        final int tokenCount = t.countTokens();
-
-        boolean result = dictionary.validCategories(data, semanticType, children);
-        // if it's a valid syntactic data --> search in DD
-        if (!result && tokenCount >= 3) {
-            result = keyword.validCategories(data, semanticType, children);
-        }
-
-        return result;
+        return dictionary.validCategories(data, semanticType, children);
     }
 
     public void closeIndex() {

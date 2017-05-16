@@ -134,7 +134,7 @@ public class SemanticQualityAnalyzer extends QualityAnalyzer<ValueQualityStatist
             return;
         }
         if (category.getCompleteness() != null && category.getCompleteness().booleanValue()) {
-            if (isValid(category, category.getType(), value)) {
+            if (isValid(category, value)) {
                 valueQuality.incrementValid();
             } else {
                 valueQuality.incrementInvalid();
@@ -145,20 +145,20 @@ public class SemanticQualityAnalyzer extends QualityAnalyzer<ValueQualityStatist
         }
     }
 
-    private boolean isValid(DQCategory category, CategoryType catType, String value) {
-        LFUCache<String, Boolean> categoryCache = knownValidationCategoryCache.get(category.getId());
-
-        if (categoryCache == null) {
-            categoryCache = new LFUCache<String, Boolean>(10, 1000, 0.01f);
-            knownValidationCategoryCache.put(category.getId(), categoryCache);
-        } else {
-            final Boolean isValid = categoryCache.get(value);
-            if (isValid != null) {
-                return isValid;
-            }
-        }
+    private boolean isValid(DQCategory category, String value) {
+//        LFUCache<String, Boolean> categoryCache = knownValidationCategoryCache.get(category.getId());
+//
+//        if (categoryCache == null) {
+//            categoryCache = new LFUCache<String, Boolean>(10, 1000, 0.01f);
+//            knownValidationCategoryCache.put(category.getId(), categoryCache);
+//        } else {
+//            final Boolean isValid = categoryCache.get(value);
+//            if (isValid != null) {
+//                return isValid;
+//            }
+//        }
         boolean validCat = false;
-        switch (catType) {
+        switch (category.getType()) {
         case REGEX:
             validCat = regexClassifier.validCategories(value, category, null);
             break;
@@ -168,14 +168,15 @@ public class SemanticQualityAnalyzer extends QualityAnalyzer<ValueQualityStatist
             break;
         case COMPOUND:
             Map<CategoryType, Set<DQCategory>> children = getChildrenCategories(category.getId());
-            validCat = regexClassifier.validCategories(value, category, children.get(CategoryType.REGEX));
-            if (!validCat)
+            if (!CollectionUtils.isEmpty(children.get(CategoryType.REGEX)))
+                validCat = regexClassifier.validCategories(value, category, children.get(CategoryType.REGEX));
+            if (!validCat && !CollectionUtils.isEmpty(children.get(CategoryType.DICT)))
                 validCat = dataDictClassifier.validCategories(value, category, children.get(CategoryType.DICT));
             break;
         default:
             break;
         }
-        categoryCache.put(value, validCat);
+//        categoryCache.put(value, validCat);
         return validCat;
     }
 

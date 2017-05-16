@@ -33,10 +33,10 @@ public class SemanticQualityAnalyzerPerformanceTest {
 
     private static final String BIG_FILE_PATH = "src/test/resources/org/talend/dataquality/semantic/statistics/validation_big_file.csv";
 
-    private static final List<String[]> RECORDS_CRM_CUST = getRecords("uniqueColAirportAndFRCities.csv");
+    private static final List<String[]> RECORDS_CRM_CUST = getRecords("frCities.csv");
 
     private static final String[] EXPECTED_CATEGORIES_DICT = new String[] { //
-            "FR_COMMUNE", //
+            "CITY_FR_COMPOUND", //CITY_FR_COMPOUND or FR_COMMUNE
             DictionaryGenerationSpec.CIVILITY.getCategoryName(), //
             DictionaryGenerationSpec.CONTINENT.getCategoryName(), //
             DictionaryGenerationSpec.COUNTRY.getCategoryName(), //
@@ -89,26 +89,7 @@ public class SemanticQualityAnalyzerPerformanceTest {
         for (String[] record : records) {
             analyzers.analyze(record);
         }
-        final List<Result> result = analyzers.getResult();
         System.out.println("Result = " + (System.currentTimeMillis() - time) + " ms");
-
-        assertEquals(expectedCategories.length, result.size());
-
-        // Composite result assertions (there should be a DataType and a SemanticType)
-        for (Result columnResult : result) {
-            assertNotNull(columnResult.get(ValueQualityStatistics.class));
-        }
-
-        // Semantic validation assertions
-        for (int i = 0; i < expectedCategories.length; i++) {
-            final ValueQualityStatistics stats = result.get(i).get(ValueQualityStatistics.class);
-            // System.out.println("new long[] {" + stats.getValidCount() + ", " + stats.getInvalidCount() + ", "
-            // + stats.getEmptyCount() + "}, //");
-            assertEquals("Unexpected valid count on column " + i, expectedValidityCount[i][0], stats.getValidCount());
-            assertEquals("Unexpected invalid count on column " + i, expectedValidityCount[i][1], stats.getInvalidCount());
-            assertEquals("Unexpected empty count on column " + i, expectedValidityCount[i][2], stats.getEmptyCount());
-            assertEquals("Unexpected unknown count on column " + i, 0, stats.getUnknownCount());
-        }
     }
 
     private static List<String[]> getRecords(String path) {

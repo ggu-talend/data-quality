@@ -37,6 +37,7 @@ import org.talend.survivorship.model.RuleDefinition;
 import org.talend.survivorship.sample.SampleData;
 import org.talend.survivorship.sample.SampleDataConflict;
 import org.talend.survivorship.sample.SampleDataConflictCheckRule;
+import org.talend.survivorship.sample.SampleDataConflictFillEmpty;
 import org.talend.survivorship.sample.SampleDataConflictMostCommon2Longest;
 import org.talend.survivorship.sample.SampleDataConflictMostCommon2Longest2MostRecent;
 import org.talend.survivorship.sample.SampleDataConflictMostCommon2Longest2keepOneOfDuplicte;
@@ -199,6 +200,50 @@ public class SurvivorshipManagerTest {
     /**
      * Test method for {@link org.talend.survivorship.SurvivorshipManager#runSession(java.lang.String[][])}.
      * 
+     * @case1 most common->fill empty->longest
+     * 
+     * generate conflict by most common rule and resolve conflict by longest rule
+     * 
+     */
+
+    @Test
+    public void testRunSessionMostCommon2LongestFillEmpty() {
+
+        manager = new SurvivorshipManager(SampleData.RULE_PATH, SampleDataConflictFillEmpty.PKG_NAME_CONFLICT);
+
+        for (String str : SampleDataConflict.COLUMNS_CONFLICT.keySet()) {
+            Column column = new Column(str, SampleDataConflict.COLUMNS_CONFLICT.get(str));
+            if (column.getName().equals("lastName")) { //$NON-NLS-1$
+                for (ConflictRuleDefinition element : SampleDataConflictFillEmpty.RULES_CONFLICT_RESOLVE) {
+                    column.getConflictResolveList().add(element);
+                }
+            }
+            manager.getColumnList().add(column);
+        }
+        for (RuleDefinition element : SampleDataConflictFillEmpty.RULES_CONFLICT) {
+            manager.addRuleDefinition(element);
+        }
+        manager.initKnowledgeBase();
+        manager.checkConflictRuleValid();
+        manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
+        // 5. Retrieve results
+        HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
+        assertEquals("The size of conflictsOfSurvivor should be 1", 1, conflictsOfSurvivor.size()); //$NON-NLS-1$
+        assertTrue("The column of conflict should be lastName", conflictsOfSurvivor.contains("lastName")); //$NON-NLS-1$ //$NON-NLS-2$
+        Map<String, Object> survivorMap = manager.getSurvivorMap();
+        assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
+        Object lastNameObj = survivorMap.get("lastName"); //$NON-NLS-1$
+        assertTrue("The birthdayObj should not be null", lastNameObj != null); //$NON-NLS-1$ 
+        String resultLastName = lastNameObj.toString();
+
+        // shenze is we expect after implement code because we use longest to resolve conflict
+        assertEquals("The resultLastName should be shenze", "shenze", //$NON-NLS-1$ //$NON-NLS-2$
+                resultLastName);
+    }
+
+    /**
+     * Test method for {@link org.talend.survivorship.SurvivorshipManager#runSession(java.lang.String[][])}.
+     * 
      * @case2 most frequent->longest and with null
      * 
      * For city1 column, after most common rule generate conflict beijing and shanghai then use Longest rule resolve conflict.
@@ -298,8 +343,7 @@ public class SurvivorshipManagerTest {
     @Test
     public void testRunSessionMostCommon2OtherSurvived() {
 
-        manager = new SurvivorshipManager(SampleData.RULE_PATH,
-                SampleDataConflictMostCommon2OtherSurvivedValue.PKG_NAME_CONFLICT);
+        manager = new SurvivorshipManager(SampleData.RULE_PATH, SampleDataConflictMostCommon2OtherSurvivedValue.PKG_NAME_CONFLICT);
 
         for (String str : SampleDataConflict.COLUMNS_CONFLICT.keySet()) {
             Column column = new Column(str, SampleDataConflict.COLUMNS_CONFLICT.get(str));
@@ -669,7 +713,8 @@ public class SurvivorshipManagerTest {
     @Test
     public void testRunSessionShortest2OtherColumnDuplicateSurvivedValue() {
 
-        manager = new SurvivorshipManager(SampleData.RULE_PATH,
+        manager = new SurvivorshipManager(
+                SampleData.RULE_PATH,
                 SampleDataConflictShortest2OtherColumnDuplicateSurvivedValue.PKG_NAME_CONFLICT_TWO_TARGET_SAME_RESULT_REFERENCE_COLUMN);
 
         for (String str : SampleDataConflict.COLUMNS_CONFLICT.keySet()) {
@@ -906,7 +951,7 @@ public class SurvivorshipManagerTest {
         String line = ""; //$NON-NLS-1$
         String cvsSplitBy = ","; //$NON-NLS-1$
 
-        Object[][] result = new Object[10][9];
+        Object[][] result = new Object[11][9];
 
         try {
             br = new BufferedReader(new FileReader(pathString));

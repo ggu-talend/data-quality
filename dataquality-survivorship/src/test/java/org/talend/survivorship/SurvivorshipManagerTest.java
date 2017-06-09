@@ -184,6 +184,49 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
+        Map<String, Object> survivorMap = manager.getSurvivorMap();
+        assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
+        Object birthdayObj = survivorMap.get("birthday"); //$NON-NLS-1$
+        assertTrue("The birthdayObj should not be null", birthdayObj != null); //$NON-NLS-1$ 
+        Date resultDate = (Date) birthdayObj;
+
+        // 08-08-2000 is we expect after implement code because we use most recent to resolve conflict
+        assertEquals("The resultDate should be 08-08-2000", "08-08-2000", //$NON-NLS-1$ //$NON-NLS-2$
+                SampleData.dateToString(resultDate, "dd-MM-yyyy")); //$NON-NLS-1$
+    }
+
+    /**
+     * Test method for {@link org.talend.survivorship.SurvivorshipManager#runSession(java.lang.String[][])}.
+     * 
+     * @case most frequent->most recent(disable) and with null
+     * 
+     * generate conflict by most common rule and resolve conflict by most recent rule
+     * recent date should be 08-08-2000 rather than 04-04-2000
+     */
+
+    @Test
+    public void testRunSessionMostCommon2MostRecentDisable() {
+
+        manager = new SurvivorshipManager(SampleData.RULE_PATH, SampleDataConflictMostCommon2MostRecent.PKG_NAME_CONFLICT);
+
+        for (String str : SampleDataConflict.COLUMNS_CONFLICT.keySet()) {
+            Column column = new Column(str, SampleDataConflict.COLUMNS_CONFLICT.get(str));
+            if (column.getName().equals("birthday")) { //$NON-NLS-1$
+                for (ConflictRuleDefinition element : SampleDataConflictMostCommon2MostRecent.RULES_CONFLICT_RESOLVE_DISABLE) {
+                    column.getConflictResolveList().add(element);
+                }
+            }
+            manager.getColumnList().add(column);
+        }
+        for (RuleDefinition element : SampleDataConflictMostCommon2MostRecent.RULES_CONFLICT) {
+            manager.addRuleDefinition(element);
+        }
+        manager.initKnowledgeBase();
+        manager.checkConflictRuleValid();
+        manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
+        // 5. Retrieve results
+        HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
         assertEquals("The size of conflictsOfSurvivor should be 1", 1, conflictsOfSurvivor.size()); //$NON-NLS-1$
         assertTrue("The column of conflict should be birthday", conflictsOfSurvivor.contains("birthday")); //$NON-NLS-1$ //$NON-NLS-2$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
@@ -193,7 +236,7 @@ public class SurvivorshipManagerTest {
         Date resultDate = (Date) birthdayObj;
 
         // 08-08-2000 is we expect after implement code because we use most recent to resolve conflict
-        assertEquals("The resultDate should be 08-08-2000", "08-08-2000", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("The resultDate should be 04-04-2000", "04-04-2000", //$NON-NLS-1$ //$NON-NLS-2$
                 SampleData.dateToString(resultDate, "dd-MM-yyyy")); //$NON-NLS-1$
     }
 
@@ -228,8 +271,7 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
-        assertEquals("The size of conflictsOfSurvivor should be 1", 1, conflictsOfSurvivor.size()); //$NON-NLS-1$
-        assertTrue("The column of conflict should be lastName", conflictsOfSurvivor.contains("lastName")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
         assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
         Object lastNameObj = survivorMap.get("lastName"); //$NON-NLS-1$
@@ -271,8 +313,7 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
-        assertEquals("The size of conflictsOfSurvivor should be 1", 1, conflictsOfSurvivor.size()); //$NON-NLS-1$
-        assertTrue("The column of conflict should be birthday", conflictsOfSurvivor.contains("city1")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
         assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
         Object cityObj = survivorMap.get("city1"); //$NON-NLS-1$
@@ -319,8 +360,7 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
-        assertEquals("The size of conflictsOfSurvivor should be 1", 1, conflictsOfSurvivor.size()); //$NON-NLS-1$
-        assertTrue("The column of conflict should be birthday", conflictsOfSurvivor.contains("firstName")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
         assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
         Object firstNameObj = survivorMap.get("firstName"); //$NON-NLS-1$
@@ -343,7 +383,8 @@ public class SurvivorshipManagerTest {
     @Test
     public void testRunSessionMostCommon2OtherSurvived() {
 
-        manager = new SurvivorshipManager(SampleData.RULE_PATH, SampleDataConflictMostCommon2OtherSurvivedValue.PKG_NAME_CONFLICT);
+        manager = new SurvivorshipManager(SampleData.RULE_PATH,
+                SampleDataConflictMostCommon2OtherSurvivedValue.PKG_NAME_CONFLICT);
 
         for (String str : SampleDataConflict.COLUMNS_CONFLICT.keySet()) {
             Column column = new Column(str, SampleDataConflict.COLUMNS_CONFLICT.get(str));
@@ -363,8 +404,7 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
-        assertEquals("The size of conflictsOfSurvivor should be 1", 1, conflictsOfSurvivor.size()); //$NON-NLS-1$
-        assertTrue("The column of conflict should be city1", conflictsOfSurvivor.contains("city1")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
         assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
         Object city1 = survivorMap.get("city1"); //$NON-NLS-1$
@@ -417,11 +457,11 @@ public class SurvivorshipManagerTest {
         Object lastNameObj = survivorMap.get("lastName"); //$NON-NLS-1$
         assertTrue("The lastNameObj should not be null", lastNameObj != null); //$NON-NLS-1$ 
         String resultStr = (String) lastNameObj;
-        // Green is our Constant value which will be setting by user after that.
-        // In fact, Tony and Green is conflict after most common rule.
-        // But Green is constant so that we don't choose it.
-        // On my side result is Green too. need now code to implement it
-        assertEquals("The resultStr should be Tony", "Tony", //$NON-NLS-1$ //$NON-NLS-2$
+        // conflicting between "" and Green after most common
+        // after fill empty conflicting between "tony" "shenze" and "Green"
+        // after exclud because of Green is constant so that we don't choose it.
+        // after longest we get unique result shenze
+        assertEquals("The resultStr should be shenze", "shenze", //$NON-NLS-1$ //$NON-NLS-2$
                 resultStr);
     }
 
@@ -559,7 +599,7 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
-        assertEquals("The size of conflictsOfSurvivor should be 2", 2, conflictsOfSurvivor.size()); //$NON-NLS-1$
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
         assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
         assertTrue("The size of SurvivorMap should be 2", survivorMap.size() == 2); //$NON-NLS-1$
@@ -612,7 +652,7 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
-        assertEquals("The size of conflictsOfSurvivor should be 2", 2, conflictsOfSurvivor.size()); //$NON-NLS-1$
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
         assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
         assertTrue("The size of SurvivorMap should be 2", survivorMap.size() == 2); //$NON-NLS-1$
@@ -713,8 +753,7 @@ public class SurvivorshipManagerTest {
     @Test
     public void testRunSessionShortest2OtherColumnDuplicateSurvivedValue() {
 
-        manager = new SurvivorshipManager(
-                SampleData.RULE_PATH,
+        manager = new SurvivorshipManager(SampleData.RULE_PATH,
                 SampleDataConflictShortest2OtherColumnDuplicateSurvivedValue.PKG_NAME_CONFLICT_TWO_TARGET_SAME_RESULT_REFERENCE_COLUMN);
 
         for (String str : SampleDataConflict.COLUMNS_CONFLICT.keySet()) {
@@ -736,7 +775,7 @@ public class SurvivorshipManagerTest {
         manager.runSession(getTableValue("/org.talend.survivorship.conflict/conflicts.csv")); //$NON-NLS-1$
         // 5. Retrieve results
         HashSet<String> conflictsOfSurvivor = manager.getConflictsOfSurvivor();
-        assertEquals("The size of conflictsOfSurvivor should be 1", 1, conflictsOfSurvivor.size()); //$NON-NLS-1$
+        assertEquals("The size of conflictsOfSurvivor should be 0", 0, conflictsOfSurvivor.size()); //$NON-NLS-1$
         Map<String, Object> survivorMap = manager.getSurvivorMap();
         assertTrue("The SurvivorMap should not be null", survivorMap != null); //$NON-NLS-1$ 
         Object city1NameObj = survivorMap.get("city1"); //$NON-NLS-1$

@@ -19,9 +19,9 @@ public class FilledAttribute extends Attribute {
 
     private Attribute orignalAttribute = null;
 
-    public FilledAttribute(Attribute attribute) {
-        super(attribute.getRecord(), attribute.getColumn(), attribute.getValue());
-        orignalAttribute = attribute;
+    public FilledAttribute(Attribute tarAttribute, Attribute souAttribute) {
+        super(tarAttribute.getRecord(), souAttribute.getColumn(), souAttribute.getValue());
+        orignalAttribute = tarAttribute;
     }
 
     /*

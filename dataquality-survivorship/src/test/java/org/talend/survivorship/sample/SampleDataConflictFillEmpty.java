@@ -24,7 +24,9 @@ public class SampleDataConflictFillEmpty {
     public static final RuleDefinition[] RULES_CONFLICT = { new RuleDefinition(Order.SEQ, "R1", "lastName", //$NON-NLS-1$ //$NON-NLS-2$
             Function.MostCommon, null, "lastName", false) }; //$NON-NLS-1$
 
-    public static final ConflictRuleDefinition[] RULES_CONFLICT_RESOLVE = { new ConflictRuleDefinition(Order.CR,
-            "CR1", "lastName", //$NON-NLS-1$ //$NON-NLS-2$
-            Function.Longest, null, "lastName", false, "firstName", false) }; //$NON-NLS-1$
+    public static final ConflictRuleDefinition[] RULES_CONFLICT_RESOLVE = {
+            new ConflictRuleDefinition(Order.CR, "CR1", "firstName", //$NON-NLS-1$ //$NON-NLS-2$
+                    Function.FillEmpty, null, "lastName", false, null, false), //$NON-NLS-1$
+            new ConflictRuleDefinition(Order.CR, "CR2", "lastName", //$NON-NLS-1$ //$NON-NLS-2$
+                    Function.Longest, null, "lastName", false, null, false) }; //$NON-NLS-1$
 }

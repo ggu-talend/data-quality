@@ -26,7 +26,7 @@ public class ConcurrentAnalyzer<T> implements Analyzer<T> {
 
     private static final long serialVersionUID = 6896234073310039985L;
 
-    private final ThreadLocal<Analyzer<T>> threadLocal;
+    private final ThreadLocal<Analyzer<T>> threadLocal;// NOSONAR
 
     private ConcurrentAnalyzer(int maxSize, AnalyzerSupplier<Analyzer<T>> supplier) {
         GenericKeyedObjectPool.Config config = new GenericKeyedObjectPool.Config();

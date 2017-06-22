@@ -145,7 +145,7 @@ public class FieldDate extends AbstractField {
 
         int year = findNearest(number, numberDaysPerYear);
         long remainingDays = number - numberDaysPerYear.get(year);
-        int month = -1, days = -1;
+        int month, days;
         if (isLeapYear(year + firstYear)) {
             month = findNearest(remainingDays, cumulativeMonthSizeLeapYear);
             days = (int) (remainingDays - cumulativeMonthSizeLeapYear.get(month));

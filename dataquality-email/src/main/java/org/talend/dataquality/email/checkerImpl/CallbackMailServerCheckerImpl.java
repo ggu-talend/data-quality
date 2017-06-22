@@ -252,9 +252,10 @@ public class CallbackMailServerCheckerImpl extends AbstractEmailChecker {
         // to take the preference into account.
         String errorMessage = StringUtils.EMPTY;
         for (int mx = 0; mx < mxList.size(); mx++) {
+            Socket skt = null;
             try {
                 int res;
-                Socket skt = new Socket(mxList.get(mx), port);
+                skt = new Socket(mxList.get(mx), port);
                 BufferedReader rdr = new BufferedReader(new InputStreamReader(skt.getInputStream()));
                 BufferedWriter wtr = new BufferedWriter(new OutputStreamWriter(skt.getOutputStream()));
 
@@ -311,6 +312,14 @@ public class CallbackMailServerCheckerImpl extends AbstractEmailChecker {
                 }
                 errorMessage = e.getMessage();
                 continue;
+            } finally {
+                if (skt != null) {
+                    try {
+                        skt.close();
+                    } catch (IOException e) {
+                        LOG.error(e);
+                    }
+                }
             }
         }
         throw new TalendSMTPRuntimeException(errorMessage);

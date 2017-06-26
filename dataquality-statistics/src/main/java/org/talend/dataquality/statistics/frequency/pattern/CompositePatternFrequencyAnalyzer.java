@@ -72,7 +72,7 @@ public class CompositePatternFrequencyAnalyzer extends AbstractFrequencyAnalyzer
             initFreqTableList(record.length);
         }
         for (int i = 0; i < record.length; i++) {
-            AbstractFrequencyStatistics freqStats = freqTableStatistics.get(i);
+            AbstractFrequencyStatistics freqStats = freqTableStatistics.get(i);// NOSONAR
 
             if (types.length > 0) {
                 analyzeField(record[i], freqStats, types[i]);

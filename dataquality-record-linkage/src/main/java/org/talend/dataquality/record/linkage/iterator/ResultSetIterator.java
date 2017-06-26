@@ -71,7 +71,7 @@ public class ResultSetIterator implements Iterator<Record> {
         } catch (SQLException e) {
             try {
                 close();
-            } catch (SQLException e1) {
+            } catch (SQLException e1) {// NOSONAR
                 LOG.error(e);
                 throw new RuntimeException("Could not close the connection", e); //$NON-NLS-1$ // NOSONAR
             }

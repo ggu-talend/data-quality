@@ -99,7 +99,7 @@ public class CategoryInferenceManager {
             final URI kwPath = this.getClass().getResource(CategoryRecognizerBuilder.DEFAULT_KW_PATH).toURI();
             return b.lucene().ddPath(ddPath).kwPath(kwPath).build();
         } catch (URISyntaxException | IOException e) {
-            throw new RuntimeException("Unable to find resources.", e);
+            throw new RuntimeException("Unable to find resources.", e);// NOSONAR
         }
         // or get the ES index.
         // TODO use ES index for category inference

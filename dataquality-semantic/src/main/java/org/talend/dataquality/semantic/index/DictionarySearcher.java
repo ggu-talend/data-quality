@@ -49,9 +49,9 @@ public class DictionarySearcher extends AbstractDictionarySearcher implements Se
 
     private static final Logger LOGGER = Logger.getLogger(DictionarySearcher.class);
 
-    private SearcherManager mgr;
+    private SearcherManager mgr;// NOSONAR
 
-    private Map<String, CachingWrapperFilter> categoryToCache = new HashMap<>();
+    private Map<String, CachingWrapperFilter> categoryToCache = new HashMap<>();// NOSONAR
 
     /**
      * SynonymIndexSearcher constructor creates this searcher and initializes the index.

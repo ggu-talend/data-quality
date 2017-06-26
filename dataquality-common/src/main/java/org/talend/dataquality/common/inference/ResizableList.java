@@ -78,7 +78,7 @@ public class ResizableList<T> implements List<T>, Serializable {
             }
             return addedMissing;
         } catch (Exception e) {
-            throw new RuntimeException("Unable to resize list of items.", e);
+            throw new RuntimeException("Unable to resize list of items.", e);// NOSONAR
         }
     }
 

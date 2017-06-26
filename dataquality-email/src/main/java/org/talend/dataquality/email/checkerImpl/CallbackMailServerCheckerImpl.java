@@ -90,7 +90,7 @@ public class CallbackMailServerCheckerImpl extends AbstractEmailChecker {
      * @throws IOException
      */
     private static int getResponse(BufferedReader in) throws IOException, TalendSMTPRuntimeException {
-        String line = null;
+        String line;
         int res = 0;
         do {
             try {
@@ -119,7 +119,7 @@ public class CallbackMailServerCheckerImpl extends AbstractEmailChecker {
             }
         } while (in.ready());
         // line.contains("authentication is required") judge whether authentication is required(for example 139.com)
-        if (res != 250 && res != 221 && res != 220 || line.contains("authentication is required")) { //$NON-NLS-1$
+        if (res != 250 && res != 221 && res != 220 || (line != null && line.contains("authentication is required"))) { //$NON-NLS-1$
             throw new TalendSMTPRuntimeException(line);
         }
         return res;
@@ -173,7 +173,7 @@ public class CallbackMailServerCheckerImpl extends AbstractEmailChecker {
 
     public void init() {
         // Prepare naming directory context.
-        Hashtable<String, String> env = new Hashtable<String, String>();
+        Hashtable<String, String> env = new Hashtable<String, String>();// NOSONAR
         env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // if the user add the paramter for: java.naming.provider.url, if has then add it to env
@@ -228,7 +228,7 @@ public class CallbackMailServerCheckerImpl extends AbstractEmailChecker {
         List<String> mxList = null;
         try {
             mxList = getMX(domain);
-        } catch (NamingException ex) {
+        } catch (NamingException ex) {// NOSONAR
             if (LOG.isInfoEnabled()) {
                 LOG.info(ex.getMessage());
             }
@@ -342,7 +342,7 @@ public class CallbackMailServerCheckerImpl extends AbstractEmailChecker {
      */
     @Override
     public EmailVerifyResult check(String email, String... strings) {
-        EmailVerifyResult result = EmailVerifyResult.REJECTED;
+        EmailVerifyResult result;
         if (check(email)) {
             result = EmailVerifyResult.VERIFIED;
         } else {

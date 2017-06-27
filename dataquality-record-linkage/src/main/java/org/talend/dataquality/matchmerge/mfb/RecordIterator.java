@@ -107,6 +107,6 @@ public class RecordIterator implements Iterator<Record> {
 
     @Override
     public void remove() {
-        throw new RuntimeException("Not supported");// NOSONAR
+        throw new UnsupportedOperationException("Not supported");// NOSONAR
     }
 }

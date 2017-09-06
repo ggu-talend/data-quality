@@ -15,6 +15,7 @@ package org.talend.dataquality.semantic.index;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -58,11 +59,11 @@ public class LuceneIndex implements Index {
     }
 
     @Override
-    public Set<String> findCategories(String data) {
+    public Set<String> findCategories(String data, List<String> categoryIds) {
 
         Set<String> foundCategorySet = new HashSet<>();
         try {
-            TopDocs docs = searcher.searchDocumentBySynonym(data);
+            TopDocs docs = searcher.searchDocumentBySynonym(data, categoryIds);
             for (ScoreDoc scoreDoc : docs.scoreDocs) {
                 Document document = searcher.getDocument(scoreDoc.doc);
                 foundCategorySet.add(document.getField(DictionarySearcher.F_CATID).stringValue());

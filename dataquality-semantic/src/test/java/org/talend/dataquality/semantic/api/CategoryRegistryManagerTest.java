@@ -22,7 +22,7 @@ public class CategoryRegistryManagerTest {
     public void testGetRegexClassifier() throws IOException, URISyntaxException {
         final String path = "target/test_crm";
         CategoryRegistryManager.setLocalRegistryPath(path);
-        CategoryRegistryManager crm = CategoryRegistryManager.getInstance();
+        CategoryRegistryManager crm = CategoryRegistryManager.getInstance("default");
         try {
 
             final UserDefinedClassifier udc = crm.getRegexClassifier(false);

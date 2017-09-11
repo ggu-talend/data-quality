@@ -107,7 +107,7 @@ public class LocalDictionaryCacheTest {
     @Test
     public void testSuggestValues() {
 
-        LocalDictionaryCache dict = CategoryRegistryManager.getInstance().getDictionaryCache();
+        LocalDictionaryCache dict = CategoryRegistryManager.getInstance("default").getDictionaryCache();
         for (String input : EXPECTED_SUGGESTIONS.keySet()) {
             Set<String> found = dict.suggestValues(SemanticCategoryEnum.FR_COMMUNE.name(), input);
 
@@ -121,11 +121,11 @@ public class LocalDictionaryCacheTest {
 
     public static void main(String[] args) {
 
-        for (DQCategory cat : CategoryRegistryManager.getInstance().listCategories()) {
+        for (DQCategory cat : CategoryRegistryManager.getInstance("default").listCategories()) {
             System.out.println(cat);
         }
 
-        LocalDictionaryCache dict = CategoryRegistryManager.getInstance().getDictionaryCache();
+        LocalDictionaryCache dict = CategoryRegistryManager.getInstance("default").getDictionaryCache();
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

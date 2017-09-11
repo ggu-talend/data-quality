@@ -56,6 +56,7 @@ public class DictionarySearcher extends AbstractDictionarySearcher {
      * SynonymIndexSearcher constructor creates this searcher and initializes the index.
      *
      * @param indexPath the path to the index.
+     * @deprecated
      */
     public DictionarySearcher(String indexPath) {
         try {
@@ -70,6 +71,7 @@ public class DictionarySearcher extends AbstractDictionarySearcher {
      * SynonymIndexSearcher constructor creates this searcher and initializes the index.
      *
      * @param indexPathURI the path to the index.
+     * @deprecated
      */
     public DictionarySearcher(URI indexPathURI) {
         try {

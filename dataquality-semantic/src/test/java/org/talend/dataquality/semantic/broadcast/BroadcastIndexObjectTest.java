@@ -12,11 +12,17 @@
 // ============================================================================
 package org.talend.dataquality.semantic.broadcast;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -34,8 +40,6 @@ import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.api.DictionaryUtils;
 import org.talend.dataquality.semantic.index.ClassPathDirectory;
 import org.talend.dataquality.semantic.index.DictionarySearcher;
-
-import static org.junit.Assert.assertEquals;
 
 public class BroadcastIndexObjectTest {
 
@@ -106,7 +110,7 @@ public class BroadcastIndexObjectTest {
 
         // create the broadcast object from local index
         final Directory cpDir = ClassPathDirectory.open(testFolder.toURI());
-        final BroadcastIndexObject bio = new BroadcastIndexObject(cpDir, true);
+        final BroadcastIndexObject bio = new BroadcastIndexObject(cpDir, "default", true);
         // get the RamDirectory from BroadcastIndexObject
         final Directory ramDir = bio.asDirectory();
 
@@ -131,17 +135,17 @@ public class BroadcastIndexObjectTest {
 
     @Test
     public void testCreateWithOpenCategories() throws URISyntaxException {
-        URI uri = CategoryRegistryManager.getInstance().getDictionaryURI();
+        URI uri = CategoryRegistryManager.getInstance("default").getDictionaryURI();
         final Directory cpDir = ClassPathDirectory.open(uri);
-        final BroadcastIndexObject bio = new BroadcastIndexObject(cpDir, true);
+        final BroadcastIndexObject bio = new BroadcastIndexObject(cpDir, "default", true);
         assertEquals("Unexpected Document Size!", 250209, bio.getDocumentList().size());
     }
 
     @Test
     public void testCreateWithoutOpenCategories() throws URISyntaxException {
-        URI uri = CategoryRegistryManager.getInstance().getDictionaryURI();
+        URI uri = CategoryRegistryManager.getInstance("default").getDictionaryURI();
         final Directory cpDir = ClassPathDirectory.open(uri);
-        final BroadcastIndexObject bio = new BroadcastIndexObject(cpDir, false);
+        final BroadcastIndexObject bio = new BroadcastIndexObject(cpDir, "default", false);
         assertEquals("Unexpected Document Size!", 45829, bio.getDocumentList().size());
     }
 

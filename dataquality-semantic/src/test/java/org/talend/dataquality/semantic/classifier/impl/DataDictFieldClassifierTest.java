@@ -66,7 +66,7 @@ public class DataDictFieldClassifierTest {
 
     @Test
     public void testValidCategoriesBeverage() throws IOException {
-        CategoryRegistryManager crm = CategoryRegistryManager.getInstance();
+        CategoryRegistryManager crm = CategoryRegistryManager.getInstance("default");
         CategoryRecognizer builder = CategoryRecognizerBuilder.newBuilder().lucene().build();
         ISubCategoryClassifier ddClassifier = builder.getDataDictFieldClassifier();
 
@@ -92,7 +92,7 @@ public class DataDictFieldClassifierTest {
 
     @Test
     public void testValidCategoriesWithFrCommune() throws IOException {
-        CategoryRegistryManager crm = CategoryRegistryManager.getInstance();
+        CategoryRegistryManager crm = CategoryRegistryManager.getInstance("default");
         CategoryRecognizer builder = CategoryRecognizerBuilder.newBuilder().lucene().build();
         ISubCategoryClassifier ddClassifier = builder.getDataDictFieldClassifier();
 

@@ -1,13 +1,15 @@
 package org.talend.dataquality.semantic.broadcast;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.MultiFields;
@@ -20,13 +22,14 @@ import org.talend.dataquality.semantic.classifier.custom.UserDefinedClassifier;
 import org.talend.dataquality.semantic.index.DictionarySearcher;
 import org.talend.dataquality.semantic.model.DQCategory;
 
-import static org.junit.Assert.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TdqCategoriesFactoryTest {
 
     @Test
     public void testCreateTdqCategories() throws IOException {
-        Collection<DQCategory> expectedCategories = CategoryRegistryManager.getInstance().listCategories(false);
+        Collection<DQCategory> expectedCategories = CategoryRegistryManager.getInstance("default").listCategories(false);
         TdqCategories cats = TdqCategoriesFactory.createTdqCategories();
 
         Map<String, DQCategory> meta = cats.getCategoryMetadata().getMetadata();
@@ -39,7 +42,7 @@ public class TdqCategoriesFactoryTest {
 
     @Test
     public void testCreateTdqCategoriesWithSpecifiedDictionaryCategory() throws IOException {
-        TdqCategories cats = TdqCategoriesFactory.createTdqCategories(
+        TdqCategories cats = TdqCategoriesFactory.createTdqCategories("default",
                 new HashSet<String>(Arrays.asList(new String[] { SemanticCategoryEnum.STREET_TYPE.name() })));
 
         Map<String, DQCategory> meta = cats.getCategoryMetadata().getMetadata();
@@ -63,8 +66,8 @@ public class TdqCategoriesFactoryTest {
 
     @Test
     public void testCreateTdqCategoriesWithSpecifiedRegexCategory() throws IOException {
-        TdqCategories cats = TdqCategoriesFactory
-                .createTdqCategories(new HashSet<>(Arrays.asList(new String[] { SemanticCategoryEnum.EMAIL.name() })));
+        TdqCategories cats = TdqCategoriesFactory.createTdqCategories("default",
+                new HashSet<>(Arrays.asList(new String[] { SemanticCategoryEnum.EMAIL.name() })));
 
         Map<String, DQCategory> meta = cats.getCategoryMetadata().getMetadata();
         assertEquals("Unexpected metadata size!", 1, meta.values().size());
@@ -81,8 +84,8 @@ public class TdqCategoriesFactoryTest {
 
     @Test
     public void testSerializable() throws Exception {
-        TdqCategories baseValue = TdqCategoriesFactory
-                .createTdqCategories(new HashSet<>(Arrays.asList(new String[] { SemanticCategoryEnum.EMAIL.name() })));
+        TdqCategories baseValue = TdqCategoriesFactory.createTdqCategories("default",
+                new HashSet<>(Arrays.asList(new String[] { SemanticCategoryEnum.EMAIL.name() })));
 
         ObjectMapper mapper = new ObjectMapper();
         try {

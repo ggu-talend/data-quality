@@ -23,7 +23,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.util.CharArraySet;
-import org.apache.lucene.document.*;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexableField;
@@ -164,9 +168,7 @@ public class DictionaryUtils {
         DQDocument dqDoc = new DQDocument();
         DQCategory dqCat = null;
         if (knownCategoryName != null) {
-            dqCat = CategoryRegistryManager.getInstance().getCategoryMetadataByName(knownCategoryName);
-        }
-        if (dqCat != null) {
+            dqCat = new DQCategory();
             String catId = doc.getField(DictionarySearcher.F_CATID).stringValue();
             dqCat.setId(catId);
             String catName = doc.getField(DictionarySearcher.F_WORD).stringValue();

@@ -27,17 +27,28 @@ public class TdqCategoriesFactory {
      * @return the serializable object
      */
     public static final TdqCategories createTdqCategories() {
-        return createTdqCategories(null);
+        return createTdqCategories("default");
     }
 
     /**
      * Load categories from local lucene index and produce a TdqCategories object.
      * 
+     * @param context
+     * @return the serializable object
+     */
+    public static final TdqCategories createTdqCategories(String context) {
+        return createTdqCategories(context, null);
+    }
+
+    /**
+     * Load categories from local lucene index and produce a TdqCategories object.
+     * 
+     * @param context
      * @param categories
      * @return the serializable object
      */
-    public static final TdqCategories createTdqCategories(Set<String> categoryNames) {
-        CategoryRegistryManager crm = CategoryRegistryManager.getInstance();
+    public static final TdqCategories createTdqCategories(String context, Set<String> categoryNames) {
+        CategoryRegistryManager crm = CategoryRegistryManager.getInstance(context);
         final Map<String, DQCategory> selectedCategoryMap = new HashMap<>();
         for (DQCategory dqCat : crm.listCategories(false)) {
             if (categoryNames == null || categoryNames.contains(dqCat.getName())) {
@@ -50,11 +61,11 @@ public class TdqCategoriesFactory {
         final BroadcastMetadataObject meta;
         try {
             try (Directory ddDir = FSDirectory.open(new File(crm.getDictionaryURI()))) {
-                dictionary = new BroadcastIndexObject(ddDir, selectedCategoryMap.keySet());
+                dictionary = new BroadcastIndexObject(ddDir, context, selectedCategoryMap.keySet());
                 LOGGER.debug("Returning dictionary at path '{" + crm.getDictionaryURI() + "}'.");
             }
             try (Directory kwDir = FSDirectory.open(new File(crm.getKeywordURI()))) {
-                keyword = new BroadcastIndexObject(kwDir, selectedCategoryMap.keySet());
+                keyword = new BroadcastIndexObject(kwDir, context, selectedCategoryMap.keySet());
                 LOGGER.debug("Returning keywords at path '{" + crm.getRegexURI() + "}'.");
             }
             UserDefinedClassifier classifiers = crm.getRegexClassifier(true);

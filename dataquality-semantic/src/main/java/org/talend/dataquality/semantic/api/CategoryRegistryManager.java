@@ -19,7 +19,14 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -95,10 +102,6 @@ public class CategoryRegistryManager {
 
     private static final Object indexExtractionLock = new Object();
 
-    private CategoryRegistryManager() {
-        this("default");
-    }
-
     private CategoryRegistryManager(String contextName) {
         this.contextName = contextName;
 
@@ -115,9 +118,9 @@ public class CategoryRegistryManager {
         }
     }
 
-    public static CategoryRegistryManager getInstance() {
-        return getInstance("default");
-    }
+    // public static CategoryRegistryManager getInstance() {
+    // return getInstance(DEFAULT_CONTEXT);
+    // }
 
     public static synchronized CategoryRegistryManager getInstance(String contextName) {
         if (instances.get(contextName) == null) {
@@ -144,7 +147,7 @@ public class CategoryRegistryManager {
         if (folder != null && folder.trim().length() > 0) {
             localRegistryPath = folder;
             usingLocalCategoryRegistry = true;
-            getInstance();
+            // getInstance();
         } else {
             LOGGER.warn("Cannot set an empty path as local registy location. Use default one: " + localRegistryPath);
         }

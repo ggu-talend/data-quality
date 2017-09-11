@@ -12,19 +12,19 @@
 // ============================================================================
 package org.talend.dataquality.semantic.broadcast;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.custom.UserDefinedClassifier;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class BroadcastRegexObjectTest {
 
     @Test
     public void testCreateAndGet() throws Exception {
         // given
-        final BroadcastRegexObject bro = new BroadcastRegexObject(CategoryRegistryManager.getInstance().getRegexURI());
+        final BroadcastRegexObject bro = new BroadcastRegexObject(CategoryRegistryManager.getInstance("default").getRegexURI());
 
         // when
         UserDefinedClassifier regex = bro.getRegexClassifier();

@@ -9,7 +9,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -58,7 +63,7 @@ public class SemanticQualityAnalyzerTest {
 
     private static final List<String[]> RECORDS_PHONES = getRecords("phone_number.csv");
 
-    public static final CategoryRegistryManager crm = CategoryRegistryManager.getInstance();
+    public static final CategoryRegistryManager crm = CategoryRegistryManager.getInstance("default");
 
     private final String[] EXPECTED_CATEGORIES_DICT = new String[] { //
             "", //
@@ -158,7 +163,7 @@ public class SemanticQualityAnalyzerTest {
         long[][] expectedCount = new long[][] { new long[] { 1, 0, 0 } };
         testAnalysis(Collections.singletonList(new String[] { "Berulle" }),
                 new String[] { SemanticCategoryEnum.FR_COMMUNE.getId() }, expectedCount, expectedCount);
-        CategoryRegistryManager.getInstance().getCategoryMetadataById(SemanticCategoryEnum.FR_COMMUNE.getTechnicalId())
+        CategoryRegistryManager.getInstance("default").getCategoryMetadataById(SemanticCategoryEnum.FR_COMMUNE.getTechnicalId())
                 .setDeleted(true);
         testAnalysis(Collections.singletonList(new String[] { "Berulle" }), new String[] { StringUtils.EMPTY }, expectedCount,
                 expectedCount);
@@ -275,7 +280,7 @@ public class SemanticQualityAnalyzerTest {
     @After
     public void finish() {
         if (builder != null) {
-            CategoryRegistryManager.getInstance().reset();
+            CategoryRegistryManager.getInstance("default").reset();
             builder.metadata(null);
         }
     }

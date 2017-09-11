@@ -49,9 +49,7 @@ class DefaultCategoryRecognizer implements CategoryRecognizer {
 
     private final Map<String, DQCategory> metadata;
 
-    private final LFUCache<String, Set<String>> knownCategoryCache = new LFUCache<String, Set<String>>(10, 1000, 0.01f);
-
-    private long emptyCount = 0;
+    private final LFUCache<String, Set<String>> knownCategoryCache = new LFUCache<>(10, 1000, 0.01f);
 
     private long total = 0;
 
@@ -96,7 +94,6 @@ class DefaultCategoryRecognizer implements CategoryRecognizer {
      */
     public Set<String> getSubCategorySet(String data) {
         if (data == null || StringUtils.EMPTY.equals(data.trim())) {
-            emptyCount++;
             return new HashSet<>();
         }
         final Set<String> knownCategory = knownCategoryCache.get(data);
@@ -119,7 +116,6 @@ class DefaultCategoryRecognizer implements CategoryRecognizer {
             break;
         case NULL:
         case BLANK:
-            emptyCount++;
             break;
         }
         return subCategorySet;
@@ -136,7 +132,6 @@ class DefaultCategoryRecognizer implements CategoryRecognizer {
         catList.clear();
         categoryToFrequency.clear();
         total = 0;
-        emptyCount = 0;
         knownCategoryCache.clear();
     }
 
@@ -154,9 +149,8 @@ class DefaultCategoryRecognizer implements CategoryRecognizer {
             for (String id : ids) {
                 categoryToLevel.put(id, 0);
                 DQCategory meta = metadata.get(id);
-                if (meta != null) {
-                    if (!CollectionUtils.isEmpty(meta.getParents()))
-                        incrementAncestorsCategories(categoryToLevel, id);
+                if (meta != null && !CollectionUtils.isEmpty(meta.getParents())) {
+                    incrementAncestorsCategories(categoryToLevel, id);
                 }
             }
             for (Map.Entry<String, Integer> entry : categoryToLevel.entrySet()) {

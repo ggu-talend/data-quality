@@ -14,7 +14,11 @@ package org.talend.dataquality.semantic.broadcast;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.store.Directory;
@@ -53,16 +57,7 @@ public class BroadcastIndexObject implements Serializable {
         this.documentList = documentList;
     }
 
-    /**
-     * Constructor
-     * 
-     * @param inputDirectory
-     */
-    public BroadcastIndexObject(Directory inputDirectory) {
-        this(inputDirectory, false);
-    }
-
-    public BroadcastIndexObject(Directory inputDirectory, Set<String> categories) {
+    public BroadcastIndexObject(Directory inputDirectory, String context, Set<String> categories) {
         try {
             documentList = BroadcastUtils.readDocumentsFromIndex(inputDirectory, categories);
         } catch (IOException e) {
@@ -77,12 +72,12 @@ public class BroadcastIndexObject implements Serializable {
      * @param inputDirectory
      * @param includeOpenCategories whether open categories should be included
      */
-    public BroadcastIndexObject(Directory inputDirectory, boolean includeOpenCategories) {
+    public BroadcastIndexObject(Directory inputDirectory, String context, boolean includeOpenCategories) {
         try {
             if (includeOpenCategories) {
                 documentList = BroadcastUtils.readDocumentsFromIndex(inputDirectory);
             } else {
-                Collection<DQCategory> cats = CategoryRegistryManager.getInstance().listCategories(false);
+                Collection<DQCategory> cats = CategoryRegistryManager.getInstance(context).listCategories(false);
                 Set<String> catIds = new HashSet<String>();
                 for (DQCategory dqCat : cats) {
                     if (CategoryType.DICT.equals(dqCat.getType())) {

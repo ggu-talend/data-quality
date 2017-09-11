@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.store.Directory;
-import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.custom.UDCategorySerDeser;
 import org.talend.dataquality.semantic.classifier.custom.UserDefinedClassifier;
 import org.talend.dataquality.semantic.index.DictionarySearchMode;
@@ -34,7 +33,7 @@ public class CategoryRecognizerBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(CategoryRecognizerBuilder.class);
 
-    private static CategoryRecognizerBuilder INSTANCE;
+    private CategoryRecognizer categoryRecognizerInstance; // do not rebuild once exists
 
     public static final String DEFAULT_METADATA_PATH = "/category/";
 
@@ -44,18 +43,23 @@ public class CategoryRecognizerBuilder {
 
     public static final String DEFAULT_RE_PATH = "/org/talend/dataquality/semantic/recognizer/categorizer.json";
 
-    private Mode mode;
+    private Mode mode = Mode.LUCENE;
 
+    @Deprecated
     private URI ddPath;
 
+    @Deprecated
     private URI kwPath;
 
     private URI regexPath;
 
+    @Deprecated
     private LuceneIndex dataDictIndex;
 
+    @Deprecated
     private LuceneIndex sharedDataDictIndex;
 
+    @Deprecated
     private LuceneIndex keywordIndex;
 
     private Directory ddDirectory;
@@ -69,10 +73,8 @@ public class CategoryRecognizerBuilder {
     private Map<String, DQCategory> metadata;
 
     public static CategoryRecognizerBuilder newBuilder() {
-        if (INSTANCE == null) {
-            INSTANCE = new CategoryRecognizerBuilder();
-        }
-        return INSTANCE;
+        System.out.println("New builder !!!");
+        return new CategoryRecognizerBuilder();
     }
 
     public CategoryRecognizerBuilder metadata(Map<String, DQCategory> metadata) {
@@ -80,6 +82,9 @@ public class CategoryRecognizerBuilder {
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     public CategoryRecognizerBuilder ddPath(URI ddPath) {
         this.ddPath = ddPath;
         return this;
@@ -95,6 +100,9 @@ public class CategoryRecognizerBuilder {
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     public CategoryRecognizerBuilder kwPath(URI kwPath) {
         this.kwPath = kwPath;
         return this;
@@ -105,6 +113,9 @@ public class CategoryRecognizerBuilder {
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     public CategoryRecognizerBuilder regexPath(URI regexPath) {
         this.regexPath = regexPath;
         return this;
@@ -124,12 +135,15 @@ public class CategoryRecognizerBuilder {
 
         switch (mode) {
         case LUCENE:
-            Map<String, DQCategory> meta = getCategoryMetadata();
-            LuceneIndex sharedDict = getSharedDataDictIndex();
-            LuceneIndex dict = getDataDictIndex();
-            LuceneIndex keyword = getKeywordIndex();
-            UserDefinedClassifier regex = getRegexClassifier();
-            return new DefaultCategoryRecognizer(sharedDict, dict, keyword, regex, meta);
+            if (categoryRecognizerInstance == null) {
+                Map<String, DQCategory> meta = getCategoryMetadata();
+                LuceneIndex sharedDict = getDataDictIndex();
+                LuceneIndex dict = getDataDictIndex();
+                LuceneIndex keyword = getKeywordIndex();
+                UserDefinedClassifier regex = getRegexClassifier();
+                categoryRecognizerInstance = new DefaultCategoryRecognizer(sharedDict, dict, keyword, regex, meta);
+            }
+            return categoryRecognizerInstance;
         case ELASTIC_SEARCH:
             throw new IllegalArgumentException("Elasticsearch mode is not supported any more");
         default:
@@ -140,7 +154,7 @@ public class CategoryRecognizerBuilder {
 
     public Map<String, DQCategory> getCategoryMetadata() {
         if (metadata == null) {
-            metadata = CategoryRegistryManager.getInstance().getCategoryMetadataMap();
+            throw new NullPointerException("Metadata is not set");
         }
         return metadata;
     }
@@ -214,11 +228,7 @@ public class CategoryRecognizerBuilder {
     private UserDefinedClassifier getRegexClassifier() {
         if (regexClassifier == null) {
             if (regexPath == null) {
-                try {
-                    regexClassifier = CategoryRegistryManager.getInstance().getRegexClassifier(true); // always reload
-                } catch (IOException e) {
-                    LOGGER.error("Failed to load provided regex classifiers", e);
-                }
+                throw new NullPointerException("RegexClassifier is not set");
             } else {
                 try {
                     regexClassifier = UDCategorySerDeser.readJsonFile(regexPath);
@@ -230,19 +240,31 @@ public class CategoryRecognizerBuilder {
         return regexClassifier;
     }
 
+    /**
+     * @deprecated
+     */
     public enum Mode {
         LUCENE,
         ELASTIC_SEARCH
     }
 
+    /**
+     * @deprecated
+     */
     public Mode getMode() {
         return mode;
     }
 
+    /**
+     * @deprecated
+     */
     public URI getDDPath() {
         return ddPath;
     }
 
+    /**
+     * @deprecated
+     */
     public URI getKWPath() {
         return kwPath;
     }

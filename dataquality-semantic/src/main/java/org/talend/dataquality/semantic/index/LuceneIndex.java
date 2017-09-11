@@ -34,6 +34,9 @@ public class LuceneIndex implements Index {
 
     private final DictionarySearcher searcher;
 
+    /**
+     * @deprecated
+     */
     public LuceneIndex(URI indexPath, DictionarySearchMode searchMode) {
         this(new DictionarySearcher(indexPath), searchMode);
     }

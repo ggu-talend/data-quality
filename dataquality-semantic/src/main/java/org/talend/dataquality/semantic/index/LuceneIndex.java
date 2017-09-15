@@ -49,6 +49,11 @@ public class LuceneIndex implements Index {
     }
 
     @Override
+    public void setCategoriesToSearch(List<String> categoryIds) {
+        searcher.setCategoriesToSearch(categoryIds);
+    }
+
+    @Override
     public void initIndex() {
         searcher.maybeRefreshIndex();
     }
@@ -59,11 +64,11 @@ public class LuceneIndex implements Index {
     }
 
     @Override
-    public Set<String> findCategories(String data, List<String> categoryIds) {
+    public Set<String> findCategories(String data) {
 
         Set<String> foundCategorySet = new HashSet<>();
         try {
-            TopDocs docs = searcher.searchDocumentBySynonym(data, categoryIds);
+            TopDocs docs = searcher.searchDocumentBySynonym(data);
             for (ScoreDoc scoreDoc : docs.scoreDocs) {
                 Document document = searcher.getDocument(scoreDoc.doc);
                 foundCategorySet.add(document.getField(DictionarySearcher.F_CATID).stringValue());

@@ -206,24 +206,34 @@ public class SurvivorshipManager extends KnowledgeManager {
      * 
      * @param resourceStreamsMap key is ResourceType, value is a List with File input stream
      */
-    public void initKnowledgeBase(List<InputStream> ruleFiles, List<InputStream> workFlowFiles) {
+    public void initKnowledgeBase(Map<org.kie.api.io.ResourceType, List<InputStream>> streamsMap) {
+        if(streamsMap.isEmpty()){
+            System.err.println("The resouce of DRL streams is Empty!"); //$NON-NLS-1$
+            return;
+        }
+        List<InputStream> ruleFiles = streamsMap.get(ResourceType.DRL);
+        List<InputStream> workFlowFiles = streamsMap.get(ResourceType.BPMN2);
 
         if (ruleFiles.isEmpty()) {
-            System.err.println("The resouces of DRL streams is Empty!"); //$NON-NLS-1$
+            System.err.println("The resouce of DRL streams is Empty!"); //$NON-NLS-1$
             return;
         }
 
-        if (ruleFiles.isEmpty()) {
-            System.err.println("The resouces of BPMN2 streams is Empty!"); //$NON-NLS-1$
+        if (workFlowFiles.isEmpty()) {
+            System.err.println("The resouce of BPMN2 streams is Empty!"); //$NON-NLS-1$
             return;
         }
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 
         for (InputStream stream : ruleFiles) {
-            kbuilder.add(newResource(stream), ResourceType.DRL);
+            if (stream != null) {
+                kbuilder.add(newResource(stream), ResourceType.DRL);
+            }
         }
         for (InputStream stream : workFlowFiles) {
-            kbuilder.add(newResource(stream), ResourceType.BPMN2);
+            if (stream != null) {
+                kbuilder.add(newResource(stream), ResourceType.BPMN2);
+            }
         }
 
         KnowledgeBuilderErrors errors = kbuilder.getErrors();
@@ -249,10 +259,14 @@ public class SurvivorshipManager extends KnowledgeManager {
         }
     }
 
+    /**
+     * 
+     * DOC talend Comment method "newResource".
+     * 
+     * @param stream
+     * @return
+     */
     public static Resource newResource(InputStream stream) {
-        if (stream == null) {
-            System.err.println("InputStream is null!!!!!!!!!!!");
-        }
         return ResourceFactory.newInputStreamResource(stream);
     }
 

@@ -1,11 +1,16 @@
 package org.talend.dataquality.semantic.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
@@ -25,81 +30,76 @@ public class LocalDictionaryCacheTest {
 
             put("Chalette", new String[] { "Chalette-sur-Voire", "Châlette-sur-Loing" });
             put("châlette", new String[] { "Chalette-sur-Voire", "Châlette-sur-Loing", });
-            put("loi",
-                    new String[] { "Loigny-la-Bataille", //
-                            "Loigné-sur-Mayenne", //
-                            "Loire-les-Marais", //
-                            "Loire-sur-Rhône", //
-                            "Loiron", //
-                            "Loiré", //
-                            "Loiré-sur-Nie", //
-                            "Loisail", //
-                            "Loisey", //
-                            "Loisia", //
-                            "Loisieux", //
-                            "Loisin", //
-                            "Loison", //
-                            "Loison-sous-Lens", //
-                            "Loison-sur-Créquoise", //
-                            "Loisy", //
-                            "Loisy-en-Brie", //
-                            "Loisy-sur-Marne", //
-                            "Loivre", //
-                            "Loix", //
+            put("loi", new String[] { "Loigny-la-Bataille", //
+                    "Loigné-sur-Mayenne", //
+                    "Loire-les-Marais", //
+                    "Loire-sur-Rhône", //
+                    "Loiron", //
+                    "Loiré", //
+                    "Loiré-sur-Nie", //
+                    "Loisail", //
+                    "Loisey", //
+                    "Loisia", //
+                    "Loisieux", //
+                    "Loisin", //
+                    "Loison", //
+                    "Loison-sous-Lens", //
+                    "Loison-sur-Créquoise", //
+                    "Loisy", //
+                    "Loisy-en-Brie", //
+                    "Loisy-sur-Marne", //
+                    "Loivre", //
+                    "Loix", //
             });
-            put("loin",
-                    new String[] { "Bagneaux-sur-Loing", //
-                            "Châlette-sur-Loing", //
-                            "Conflans-sur-Loing", //
-                            "Corgoloin", //
-                            "Dammarie-sur-Loing", //
-                            "Floing", //
-                            "Fontenay-sur-Loing", //
-                            "Gauchin-Verloingt", //
-                            "Grez-sur-Loing", //
-                            "La Madeleine-sur-Loing", //
-                            "Montigny-sur-Loing", //
-                            "Sainte-Colombe-sur-Loing", //
-                            "Souppes-sur-Loing", //
-                            "Villeloin-Coulangé", //
+            put("loin", new String[] { "Bagneaux-sur-Loing", //
+                    "Châlette-sur-Loing", //
+                    "Conflans-sur-Loing", //
+                    "Corgoloin", //
+                    "Dammarie-sur-Loing", //
+                    "Floing", //
+                    "Fontenay-sur-Loing", //
+                    "Gauchin-Verloingt", //
+                    "Grez-sur-Loing", //
+                    "La Madeleine-sur-Loing", //
+                    "Montigny-sur-Loing", //
+                    "Sainte-Colombe-sur-Loing", //
+                    "Souppes-sur-Loing", //
+                    "Villeloin-Coulangé", //
             });
-            put("loing",
-                    new String[] { "Bagneaux-sur-Loing", //
-                            "Châlette-sur-Loing", //
-                            "Conflans-sur-Loing", //
-                            "Dammarie-sur-Loing", //
-                            "Floing", //
-                            "Fontenay-sur-Loing", //
-                            "Gauchin-Verloingt", //
-                            "Grez-sur-Loing", //
-                            "La Madeleine-sur-Loing", //
-                            "Montigny-sur-Loing", //
-                            "Sainte-Colombe-sur-Loing", //
-                            "Souppes-sur-Loing", //
+            put("loing", new String[] { "Bagneaux-sur-Loing", //
+                    "Châlette-sur-Loing", //
+                    "Conflans-sur-Loing", //
+                    "Dammarie-sur-Loing", //
+                    "Floing", //
+                    "Fontenay-sur-Loing", //
+                    "Gauchin-Verloingt", //
+                    "Grez-sur-Loing", //
+                    "La Madeleine-sur-Loing", //
+                    "Montigny-sur-Loing", //
+                    "Sainte-Colombe-sur-Loing", //
+                    "Souppes-sur-Loing", //
             });
-            put("ur loin",
-                    new String[] { "Bagneaux-sur-Loing", //
-                            "Châlette-sur-Loing", //
-                            "Conflans-sur-Loing", //
-                            "Dammarie-sur-Loing", //
-                            "Fontenay-sur-Loing", //
-                            "Grez-sur-Loing", //
-                            "La Madeleine-sur-Loing", //
-                            "Montigny-sur-Loing", //
-                            "Sainte-Colombe-sur-Loing", //
-                            "Souppes-sur-Loing", //
+            put("ur loin", new String[] { "Bagneaux-sur-Loing", //
+                    "Châlette-sur-Loing", //
+                    "Conflans-sur-Loing", //
+                    "Dammarie-sur-Loing", //
+                    "Fontenay-sur-Loing", //
+                    "Grez-sur-Loing", //
+                    "La Madeleine-sur-Loing", //
+                    "Montigny-sur-Loing", //
+                    "Sainte-Colombe-sur-Loing", //
+                    "Souppes-sur-Loing", //
             });
-            put("ur-loin",
-                    new String[] { "Bagneaux-sur-Loing", //
-                            "Châlette-sur-Loing", //
-                            "Conflans-sur-Loing", //
-                            "Dammarie-sur-Loing", //
-                            "Fontenay-sur-Loing", //
-                            "Grez-sur-Loing", //
-                            "La Madeleine-sur-Loing", //
-                            "Montigny-sur-Loing", //
-                            "Sainte-Colombe-sur-Loing", //
-                            "Souppes-sur-Loing", //
+            put("ur-loin", new String[] { "Bagneaux-sur-Loing", //
+                    "Châlette-sur-Loing", //
+                    "Conflans-sur-Loing", //
+                    "Dammarie-sur-Loing", //
+                    "Fontenay-sur-Loing", //
+                    "Grez-sur-Loing", //
+                    "La Madeleine-sur-Loing", //
+                    "Montigny-sur-Loing", //
+                    "Sainte-Colombe-sur-Loing", //
+                    "Souppes-sur-Loing", //
             });
         }
     };
@@ -203,4 +203,14 @@ public class LocalDictionaryCacheTest {
 
     }
 
+    @Test
+    public void testListDocuments() {
+        LocalDictionaryCache dict = CategoryRegistryManager.getInstance().getDictionaryCache();
+        List<DQDocument> listDocuments = dict.listDocuments(SemanticCategoryEnum.FR_COMMUNE.name(), 0, 50);
+        for (DQDocument dqDocument : listDocuments) {
+            // dqDocument.getValues().toArray()
+            System.out.println(dqDocument.toString());
+        }
+
+    }
 }

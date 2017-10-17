@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -205,11 +206,16 @@ public class LocalDictionaryCacheTest {
 
     @Test
     public void testListDocuments() {
-        LocalDictionaryCache dict = CategoryRegistryManager.getInstance().getDictionaryCache();
-        List<DQDocument> listDocuments = dict.listDocuments(SemanticCategoryEnum.FR_COMMUNE.name(), 0, 50);
-        for (DQDocument dqDocument : listDocuments) {
-            // dqDocument.getValues().toArray()
-            System.out.println(dqDocument.toString());
+        CategoryRegistryManager instance = CategoryRegistryManager.getInstance();
+        for (DQCategory cat : instance.listCategories()) {
+            System.out.println(cat);
+            LocalDictionaryCache dict = instance.getDictionaryCache();
+            List<DQDocument> listDocuments = dict.listDocuments(cat.getName(), 0, 10);
+            List<String> aux = new ArrayList();
+            for (DQDocument dqDocument : listDocuments) {
+                aux.addAll(dqDocument.getValues());
+            }
+            System.out.println("Found " + aux.size() + " values in " + cat.getName() + " DQCategory.");
         }
 
     }

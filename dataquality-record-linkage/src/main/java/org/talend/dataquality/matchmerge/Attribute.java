@@ -16,6 +16,7 @@
  */
 package org.talend.dataquality.matchmerge;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -24,7 +25,10 @@ import org.apache.commons.collections.iterators.IteratorChain;
 /**
  * A attribute is a "column" in a {@link org.talend.dataquality.matchmerge.Record record}.
  */
-public class Attribute {
+public class Attribute implements Serializable {
+
+
+    private static final long serialVersionUID = -4408981541104332570L;
 
     private final String label;
 

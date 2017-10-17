@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.dataquality.matchmerge;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +20,9 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.ObjectUtils;
 
-public class AttributeValues<T extends Comparable<T>> implements Iterable<T> {
+public class AttributeValues<T extends Comparable<T>> implements Iterable<T>, Serializable {
+
+    private static final long serialVersionUID = 5884510185079632780L;
 
     private final TreeSet<Entry<T>> values = new TreeSet<Entry<T>>();
 
@@ -134,7 +137,9 @@ public class AttributeValues<T extends Comparable<T>> implements Iterable<T> {
         return size;
     }
 
-    public class Entry<E extends Comparable<T>> implements Comparable<Entry<E>> {
+    public class Entry<E extends Comparable<T>> implements Comparable<Entry<E>>, Serializable {
+
+        private static final long serialVersionUID = -4577080103453107543L;
 
         private final E value;
 

@@ -27,7 +27,6 @@ import org.apache.commons.collections.iterators.IteratorChain;
  */
 public class Attribute implements Serializable {
 
-
     private static final long serialVersionUID = -4408981541104332570L;
 
     private final String label;

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.talend.dataquality.matchmerge.Attribute;
 import org.talend.dataquality.matchmerge.AttributeValues;
@@ -66,7 +65,7 @@ public class RecordIterator implements Iterator<Record> {
 
     @Override
     public Record next() {
-        Vector<Attribute> record = new Vector<Attribute>();
+        List<Attribute> record = new ArrayList<Attribute>();
         // Records
         int rcdIdx = currentIndex;
         if (currentIndex >= rcdGenerators.size()) {
@@ -81,7 +80,7 @@ public class RecordIterator implements Iterator<Record> {
             Attribute attribute = new Attribute(generator.getKey(), generator.getValue().getColumnIndex());
             attribute.setValue(generator.getValue().newValue());
             record.add(attribute);
-            //Added TDQ-12057 20160918,yyin--if the related attribute has its original values, add them.
+            // Added TDQ-12057 20160918,yyin--if the related attribute has its original values, add them.
             Object attriValues = generator.getValue().getAttribute();
             if (attriValues != null) {
                 attribute.getValues().merge((AttributeValues<String>) attriValues);
@@ -97,7 +96,7 @@ public class RecordIterator implements Iterator<Record> {
      * @param record
      * @return
      */
-    protected Record createRecord(Vector<Attribute> record, List<DQAttribute<?>> originRow) {
+    protected Record createRecord(List<Attribute> record, List<DQAttribute<?>> originRow) {
         return new Record(record, String.valueOf(currentIndex - 1), timestamp++, "MFB");
     }
 

@@ -23,6 +23,7 @@ import org.apache.lucene.store.Directory;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.classifier.custom.UDCategorySerDeser;
 import org.talend.dataquality.semantic.classifier.custom.UserDefinedClassifier;
+import org.talend.dataquality.semantic.index.ClassPathDirectory;
 import org.talend.dataquality.semantic.index.DictionarySearchMode;
 import org.talend.dataquality.semantic.index.LuceneIndex;
 import org.talend.dataquality.semantic.model.DQCategory;
@@ -46,10 +47,6 @@ public class CategoryRecognizerBuilder {
 
     private Mode mode;
 
-    private URI dataDictPath;
-
-    private URI keywordPath;
-
     private URI regexPath;
 
     private LuceneIndex sharedDataDictIndex;
@@ -70,6 +67,8 @@ public class CategoryRecognizerBuilder {
 
     private String tenantID = CategoryRegistryManager.DEFAULT_TENANT_ID;
 
+    private DictionaryConstituents constituents;
+
     public static CategoryRecognizerBuilder newBuilder() {
         return new CategoryRecognizerBuilder();
     }
@@ -84,11 +83,6 @@ public class CategoryRecognizerBuilder {
         return this;
     }
 
-    public CategoryRecognizerBuilder ddPath(URI dataDictPath) {
-        this.dataDictPath = dataDictPath;
-        return this;
-    }
-
     public CategoryRecognizerBuilder ddDirectory(Directory sharedDataDictDirectory) {
         this.sharedDataDictDirectory = sharedDataDictDirectory;
         return this;
@@ -99,18 +93,8 @@ public class CategoryRecognizerBuilder {
         return this;
     }
 
-    public CategoryRecognizerBuilder kwPath(URI keywordPath) {
-        this.keywordPath = keywordPath;
-        return this;
-    }
-
     public CategoryRecognizerBuilder kwDirectory(Directory keywordDirectory) {
         this.keywordDirectory = keywordDirectory;
-        return this;
-    }
-
-    public CategoryRecognizerBuilder regexPath(URI regexPath) {
-        this.regexPath = regexPath;
         return this;
     }
 
@@ -128,18 +112,25 @@ public class CategoryRecognizerBuilder {
 
         switch (mode) {
         case LUCENE:
-            Map<String, DQCategory> meta = getCategoryMetadata();
-            LuceneIndex sharedDataDict = getSharedDataDictIndex();
-            LuceneIndex customDataDict = getCustomDataDictIndex();
-            LuceneIndex keyword = getKeywordIndex();
-            UserDefinedClassifier regex = getRegexClassifier();
-            return new DefaultCategoryRecognizer(sharedDataDict, customDataDict, keyword, regex, meta);
+            return new DefaultCategoryRecognizer(getDictionaryConstituents());
         case ELASTIC_SEARCH:
             throw new IllegalArgumentException("Elasticsearch mode is not supported any more");
         default:
             throw new IllegalArgumentException("no mode specified.");
         }
 
+    }
+
+    public DictionaryConstituents getDictionaryConstituents() {
+        if (constituents == null) {
+            Map<String, DQCategory> meta = getCategoryMetadata();
+            LuceneIndex sharedDataDict = getSharedDataDictIndex();
+            LuceneIndex customDataDict = getCustomDataDictIndex();
+            LuceneIndex keyword = getKeywordIndex();
+            UserDefinedClassifier regex = getRegexClassifier();
+            constituents = new DictionaryConstituents(meta, regex, sharedDataDict, customDataDict, keyword);
+        }
+        return constituents;
     }
 
     public Map<String, DQCategory> getCategoryMetadata() {
@@ -177,21 +168,13 @@ public class CategoryRecognizerBuilder {
 
     public LuceneIndex getKeywordIndex() {
         if (keywordIndex == null) {
-            if (keywordDirectory == null) {
-                if (keywordPath == null) {
-                    try {
-                        keywordPath = CategoryRecognizerBuilder.class.getResource(DEFAULT_KW_PATH).toURI();
-                    } catch (URISyntaxException e) {
-                        LOGGER.error(e.getMessage(), e);
-                    }
+            try {
+                if (keywordDirectory == null) {
+                    keywordDirectory = ClassPathDirectory.open(CategoryRegistryManager.getInstance().getKeywordURI());
                 }
-                keywordIndex = new LuceneIndex(keywordPath, DictionarySearchMode.MATCH_SEMANTIC_KEYWORD);
-            } else {
-                if (keywordPath == null) {
-                    keywordIndex = new LuceneIndex(keywordDirectory, DictionarySearchMode.MATCH_SEMANTIC_KEYWORD);
-                } else {
-                    throw new IllegalArgumentException("Please call either kwDirectory() or kwPath() but not both!");
-                }
+                keywordIndex = new LuceneIndex(keywordDirectory, DictionarySearchMode.MATCH_SEMANTIC_KEYWORD);
+            } catch (URISyntaxException e) {
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return keywordIndex;
@@ -236,5 +219,4 @@ public class CategoryRecognizerBuilder {
             }
         }
     }
-
 }

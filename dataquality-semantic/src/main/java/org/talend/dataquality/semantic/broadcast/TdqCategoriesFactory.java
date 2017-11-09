@@ -45,6 +45,7 @@ public class TdqCategoriesFactory {
             }
         }
         final BroadcastIndexObject dictionary;
+        final BroadcastIndexObject customDictionary;
         final BroadcastIndexObject keyword;
         final BroadcastRegexObject regex;
         final BroadcastMetadataObject meta;
@@ -53,6 +54,10 @@ public class TdqCategoriesFactory {
                 dictionary = new BroadcastIndexObject(ddDir, selectedCategoryMap.keySet());
                 LOGGER.debug("Returning dictionary at path '{" + crm.getDictionaryURI() + "}'.");
             }
+            Directory customDataDictDir = crm.getCustomDictionaryHolder().getDataDictDirectory();
+            customDictionary = new BroadcastIndexObject(customDataDictDir, selectedCategoryMap.keySet());
+            LOGGER.debug("Returning dictionary at path '{" + crm.getDictionaryURI() + "}'.");
+
             try (Directory kwDir = FSDirectory.open(new File(crm.getKeywordURI()))) {
                 keyword = new BroadcastIndexObject(kwDir, selectedCategoryMap.keySet());
                 LOGGER.debug("Returning keywords at path '{" + crm.getRegexURI() + "}'.");
@@ -62,8 +67,10 @@ public class TdqCategoriesFactory {
             LOGGER.debug("Returning regexes at path '{" + crm.getRegexURI() + "}'.");
             meta = new BroadcastMetadataObject(selectedCategoryMap);
             LOGGER.debug("Returning category metadata.");
-            return new TdqCategories(meta, dictionary, keyword, regex);
-        } catch (URISyntaxException | IOException e) {
+            return new TdqCategories(meta, dictionary, customDictionary, keyword, regex);
+        } catch (URISyntaxException |
+
+                IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;

@@ -13,10 +13,13 @@
 package org.talend.dataquality.datamasking.semantic;
 
 import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.talend.dataquality.datamasking.functions.DateVariance;
 import org.talend.dataquality.datamasking.functions.Function;
+import org.talend.dataquality.semantic.api.CategoryRegistryManager;
+import org.talend.dataquality.semantic.model.CategoryType;
 
 public class SemanticMaskerFunctionFactory {
 
@@ -46,6 +49,16 @@ public class SemanticMaskerFunctionFactory {
                 LOGGER.debug(e.getMessage(), e);
             }
         }
+
+        if ("string".equals(dataType)) {
+            org.talend.dataquality.semantic.model.DQCategory category = CategoryRegistryManager.getInstance()
+                    .getCategoryMetadataByName(semanticCategory);
+            if (category != null && CategoryType.REGEX.equals(category.getType())) {
+                function = new GenerateFromRegex();
+                function.parse(semanticCategory, true, new Random(100l));
+            }
+        }
+
         if (function == null) {
             switch (dataType) {
             case "numeric":

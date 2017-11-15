@@ -14,8 +14,19 @@ package org.talend.dataquality.semantic.index;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
@@ -24,6 +35,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.talend.dataquality.record.linkage.attribute.LevenshteinMatcher;
 import org.talend.dataquality.record.linkage.constant.TokenizedResolutionMethod;
+import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.model.DQCategory;
 
 /**
@@ -115,6 +127,13 @@ public class LuceneIndex implements Index {
         return sortedMap;
     }
 
+    /**
+     * 
+     * @param input An input value
+     * @param category Category name
+     * @param similarity A threshold value, the compared score must be >= similarity
+     * @return all similar fields in a map which has score >= similarity
+     */
     public Map<String, Double> findSimilarFieldsInCategory(String input, String category, Double similarity) {
         Map<String, Double> similarFieldMap = new HashMap<>();
         try {
@@ -139,6 +158,37 @@ public class LuceneIndex implements Index {
         return sortMapByValue(similarFieldMap);
     }
 
+    /**
+     * 
+     * @param input An input value
+     * @param category Category name
+     * @param similarity A threshold value, the compared score must be >= similarity
+     * @return The most similar Filed which is the shortest distance
+     */
+    public String findMostSimilarFieldInCategory(String input, String category, Double similarity) {
+        String mostSimilar = StringUtils.EMPTY;
+        double mostDistance = 0.0d;
+        try {
+            TopDocs docs = searcher.findSimilarValuesInCategory(input, category);
+            for (ScoreDoc scoreDoc : docs.scoreDocs) {
+                Document doc = searcher.getDocument(scoreDoc.doc);
+                IndexableField[] synFields = doc.getFields(DictionarySearcher.F_RAW);
+                for (IndexableField synField : synFields) {
+                    String synFieldValue = synField.stringValue();
+                    double currentDistance = calculateOverallSimilarity(input, synFieldValue);
+                    if (currentDistance >= similarity && currentDistance > mostDistance) {
+                        mostDistance = currentDistance;
+                        mostSimilar = synFieldValue;
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            LOG.error(e.getMessage());
+        }
+        return mostSimilar;
+    }
+
     private double calculateOverallSimilarity(String input, String field) throws IOException {
         final List<String> inputTokens = DictionarySearcher.getTokensFromAnalyzer(input);
         final List<String> fieldTokens = DictionarySearcher.getTokensFromAnalyzer(field);
@@ -154,5 +204,19 @@ public class LuceneIndex implements Index {
         }
         final double fullSimilarity = levenshtein.getMatchingWeight(input.toLowerCase(), field.toLowerCase());
         return (bestTokenSimilarity + fullSimilarity) / 2;
+    }
+
+    /**
+     * 
+     * @return Create a default LuceneIndex
+     */
+    public LuceneIndex getDefaultLuceneIndex() {
+        URI ddPath = null;
+        try {
+            ddPath = CategoryRegistryManager.getInstance().getDictionaryURI();
+        } catch (URISyntaxException e) {
+            LOG.error(e);
+        }
+        return new LuceneIndex(ddPath, DictionarySearchMode.MATCH_SEMANTIC_DICTIONARY);
     }
 }

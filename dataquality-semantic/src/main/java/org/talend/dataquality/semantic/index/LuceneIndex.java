@@ -14,7 +14,6 @@ package org.talend.dataquality.semantic.index;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.talend.dataquality.record.linkage.attribute.LevenshteinMatcher;
 import org.talend.dataquality.record.linkage.constant.TokenizedResolutionMethod;
-import org.talend.dataquality.semantic.api.CategoryRegistryManager;
 import org.talend.dataquality.semantic.model.DQCategory;
 
 /**
@@ -206,17 +204,4 @@ public class LuceneIndex implements Index {
         return (bestTokenSimilarity + fullSimilarity) / 2;
     }
 
-    /**
-     * 
-     * @return Create a default LuceneIndex
-     */
-    public LuceneIndex getDefaultLuceneIndex() {
-        URI ddPath = null;
-        try {
-            ddPath = CategoryRegistryManager.getInstance().getDictionaryURI();
-        } catch (URISyntaxException e) {
-            LOG.error(e);
-        }
-        return new LuceneIndex(ddPath, DictionarySearchMode.MATCH_SEMANTIC_DICTIONARY);
-    }
 }

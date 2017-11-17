@@ -21,6 +21,7 @@ public final class Constant {
     private Constant() {
         // nothing here
         // test_pr_qiongli
+        // test_pr_qiongli_2nd_commit
     }
 
     public static final char LEFT_BRACKET = '<'; // $NON-NLS-1$

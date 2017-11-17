@@ -52,6 +52,18 @@
 			<groupId>org.talend.daikon</groupId>
 			<artifactId>daikon</artifactId>
 		</dependency>
+		
+		<dependency>
+            <groupId>org.talend.dataquality</groupId>
+            <artifactId>dataquality-semantic-model</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.talend.dataquality</groupId>
+            <artifactId>dataquality-semantic</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
 		<!-- spark dependencies -->
 		<dependency>
@@ -117,6 +129,7 @@
 					</excludes>
 					<testExcludes>
 						<testExclude>org/talend/dataquality/sampling/collectors/*.java</testExclude>
+						<testExclude>**/SparkSamplingUtilTest.java</testExclude>
 					</testExcludes>
                 </configuration>
             </plugin>

@@ -41,7 +41,8 @@ public class GenerateFromRegex extends Function<String> {
         if (StringUtils.isEmpty(inputValue)) {
             return EMPTY_STRING;
         }
-        return generex.random();
+        String result = generex.random();
+        return result.substring(1, result.length() - 1);
     }
 
     /*

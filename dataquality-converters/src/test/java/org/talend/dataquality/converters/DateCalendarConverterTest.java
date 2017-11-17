@@ -393,7 +393,6 @@ public class DateCalendarConverterTest {
                 new DateCalendarConverter(MinguoChronology.INSTANCE, IsoChronology.INSTANCE).convert("0106-02-30")); //$NON-NLS-1$
         //        assertEquals("", //$NON-NLS-1$
         //                new DateCalendarConverter(JapaneseChronology.INSTANCE, IsoChronology.INSTANCE).convert("0029-02-28")); //$NON-NLS-1$ 
-        assertEquals(ISODateValid, new DateCalendarConverter(PATTERN_WITH_G, null, JapaneseChronology.INSTANCE,
-                IsoChronology.INSTANCE, Locale.US, Locale.US).convert("0029-02-28 Heisei")); //$NON-NLS-1$ 
-    }
+
+           }
 }

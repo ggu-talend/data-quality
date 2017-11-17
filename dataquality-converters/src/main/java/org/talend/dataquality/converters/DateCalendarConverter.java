@@ -143,11 +143,12 @@ public class DateCalendarConverter {
 
         // TDQ-14421 use ResolverStyle.STRICT to validate a date. such as "2017-02-29" should be
         // invalid.STRICT model for pattern without G,should replace 'y' with 'u'.see Java DOC.
+
         if (inputChronologyType != JapaneseChronology.INSTANCE && !this.inputFormatPattern.contains(PATTERN_SUFFIX_ERA)) {
             this.inputFormatPattern = this.inputFormatPattern.replace('y', 'u');
         }
         this.inputDateTimeFormatter = new DateTimeFormatterBuilder().parseLenient().appendPattern(this.inputFormatPattern)
-                .toFormatter().withChronology(this.inputChronologyType)
+                .toFormatter().withChronology(this.inputChronologyType).withResolverStyle(ResolverStyle.STRICT)
                 .withDecimalStyle(DecimalStyle.of(Locale.getDefault(Locale.Category.FORMAT)));
         // Use STRICT model except JapaneseChronology.
         if (inputChronologyType != JapaneseChronology.INSTANCE) {

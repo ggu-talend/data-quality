@@ -197,7 +197,7 @@ public class CategoryRecognizerBuilder {
         return keywordIndex;
     }
 
-    private UserDefinedClassifier getRegexClassifier() {
+    public UserDefinedClassifier getRegexClassifier() {
         if (regexClassifier == null) {
             if (regexPath == null) {
                 try {

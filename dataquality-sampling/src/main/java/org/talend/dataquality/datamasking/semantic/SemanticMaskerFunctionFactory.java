@@ -19,7 +19,10 @@ import org.apache.log4j.Logger;
 import org.talend.dataquality.datamasking.functions.DateVariance;
 import org.talend.dataquality.datamasking.functions.Function;
 import org.talend.dataquality.semantic.api.CategoryRegistryManager;
+import org.talend.dataquality.semantic.classifier.custom.UserDefinedClassifier;
 import org.talend.dataquality.semantic.model.CategoryType;
+
+import com.mifmif.common.regex.Generex;
 
 public class SemanticMaskerFunctionFactory {
 
@@ -49,13 +52,16 @@ public class SemanticMaskerFunctionFactory {
                 LOGGER.debug(e.getMessage(), e);
             }
         }
-
-        if ("string".equals(dataType)) {
-            org.talend.dataquality.semantic.model.DQCategory category = CategoryRegistryManager.getInstance()
-                    .getCategoryMetadataByName(semanticCategory);
-            if (category != null && CategoryType.REGEX.equals(category.getType())) {
+        org.talend.dataquality.semantic.model.DQCategory category = CategoryRegistryManager.getInstance()
+                .getCategoryMetadataByName(semanticCategory);
+        if (category != null && CategoryType.REGEX.equals(category.getType())) {
+            UserDefinedClassifier userDefinedClassifier = new UserDefinedClassifier();
+            String patternString = userDefinedClassifier.getPatternStringByCategoryId(category.getId());
+            if (Generex.isValidPattern(patternString)) {
                 function = new GenerateFromRegex();
-                function.parse(semanticCategory, true, new Random(100l));
+                function.parse(patternString, true, new Random(100l));
+            } else {
+                System.out.println(semanticCategory);
             }
         }
 
@@ -89,5 +95,4 @@ public class SemanticMaskerFunctionFactory {
         }
         return function;
     }
-
 }
